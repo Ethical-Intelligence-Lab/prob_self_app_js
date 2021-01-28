@@ -27,6 +27,8 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
 
-    path('', views.home, name='home'),
+    path('logic/', views.logic, name='logic'),
+    path('contingency/', views.contingency, name='contingency'),
+    path('game_finished/', views.game_finished, name='game_finished'),
 
 ]

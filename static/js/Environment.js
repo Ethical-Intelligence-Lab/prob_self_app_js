@@ -103,6 +103,7 @@ class Game {
 
         if(this.getLevelCount() === 5) {
             alert("Game Won!");
+            this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
             // save the data
         } else {
             this.#action_count.push(0);
@@ -312,7 +313,7 @@ class Game {
         this.#self_start_locs.pop();
         var datamap = { action_count: this.#action_count, game_type: this.#gameType,
         "wall_interactions": this.#wall_interactions, "ns_interactions": this.#ns_interactions, "map": this.#maps,
-        "self_start_locs": this.#self_start_locs, "self_locs": math.transpose(this.#self_locs) };
+        "self_start_locs": this.#self_start_locs, "self_locs": this.#self_locs };
         return datamap;
     }
 }

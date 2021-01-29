@@ -21,6 +21,11 @@
      </div>
 </div>
 
+<form id = "finish" action="/game_finished/" method="POST" >
+    {% csrf_token %}
+    <input type="hidden" id = "data" name="data" value="" />
+</form>
+
 <div id="container"></div>
 <script>
 
@@ -74,6 +79,11 @@
                 document.getElementById("step_count").textContent = "Current Action Count: " + game.getCurrentActionCount();
                 document.getElementById("level_count").textContent = "Level: " + game.getLevelCount();
                 paintBoard();
+                if( game.getLevelCount() === 5 ) {
+                    document.getElementById("data").value = JSON.stringify(game.getData());
+                    alert(JSON.stringify(game.getData()));
+                    document.getElementById("finish").submit();
+                }
     }}});
 
 </script>

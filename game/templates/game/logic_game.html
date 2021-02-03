@@ -100,7 +100,9 @@
                     document.getElementById("data").value = JSON.stringify(game.getData());
                     //alert(JSON.stringify(game.getData()));
                     document.getElementById("finish").submit();
-                    setTimeout(myFunction, 3000);
+                    setTimeout(function(){
+                        alert('submitting result');
+                    }, 3000);
                     document.getElementById("dataf").value = JSON.stringify(game.getData());
                     document.getElementById("endForm").submit();
                 }

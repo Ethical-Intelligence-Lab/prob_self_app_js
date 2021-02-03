@@ -102,8 +102,8 @@
 
                     document.getElementById("dataf").value = JSON.stringify(game.getData());
 
-                    $.post($("#finish").attr("action"), $("#finish").serialize(), function() {
-                      $.post($("#endForm").attr("action"), $("#endForm").serialize(),
+                    $.post($("#endForm").attr("action"), $("#endForm").serialize(), function() {
+                      $.post($("#finish").attr("action"), $("#finish").serialize(),
                         function() {
                           alert('Both forms submitted');
                         });

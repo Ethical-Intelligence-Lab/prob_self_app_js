@@ -103,13 +103,15 @@ class Game {
 
         if(this.getLevelCount() === 5) {
             alert("Game Won!");
-            this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
+            //this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
+            this.#self_locs.push(deepCopy(this.#current_self_locs));
             // save the data
         } else {
             this.#action_count.push(0);
             this.#wall_interactions.push(0);
             this.#ns_interactions.push(0);
-            this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
+            //this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
+            this.#self_locs.push(deepCopy(this.#current_self_locs));
             this.#current_self_locs = []
         }
     }
@@ -209,6 +211,8 @@ class Game {
             this.#avatarPosition = [new_x, new_y];
             this.increamentActionCount();
             console.log(this.#action_count);
+            this.#current_self_locs.push(deepCopy(this.#avatarPosition));
+
         } else if( this.canMove(direction) === 2 ) {
             this.nextLevel();
         } else { // cannot move
@@ -218,10 +222,12 @@ class Game {
                 this.#ns_interactions[this.#level_count]++;
             }
 
+            this.#current_self_locs.push(deepCopy(this.#avatarPosition));
             this.increamentActionCount();
         }
 
-        this.#current_self_locs.push(JSON.stringify(this.#avatarPosition));
+        //this.#current_self_locs.push(JSON.stringify(this.#avatarPosition));
+
 
     }
 
@@ -468,4 +474,20 @@ function contingency_levels(levels) {
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]);
+}
+
+const deepCopy = (arr) => {
+  let copy = [];
+  arr.forEach(elem => {
+    if(Array.isArray(elem)){
+      copy.push(deepCopy(elem))
+    }else{
+      if (typeof elem === 'object') {
+        copy.push(deepCopyObject(elem))
+    } else {
+        copy.push(elem)
+      }
+    }
+  })
+  return copy;
 }

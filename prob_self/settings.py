@@ -25,7 +25,7 @@ SECRET_KEY = 'mrb+w6fx+f5^t356e=1^nwou0_z1g(ked^cyevj+f^ug#nb0f!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['prob-self-mturk.herokuapp.com', '127.0.0.1']
 
 
 # Application definition

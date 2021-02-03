@@ -1,7 +1,9 @@
 import json
 import os
+from copy import deepcopy
 
 import boto3
+import numpy as np
 from botocore.exceptions import ClientError
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -29,8 +31,12 @@ def game_finished(request):
 
     final_data = json.loads(data)
 
+    final_data["self_locs"] = take_transpose(final_data["self_locs"])
+    print(final_data["self_locs"])
+
     filename = dt + ".json"
-    try:
+    '''
+        try:
         s3 = boto3.client(
             's3',
             aws_access_key_id=AWS_ACCESS_KEY,
@@ -45,4 +51,19 @@ def game_finished(request):
         # with open(filename, 'w') as f:
         #    json.dump(final_data, f)
 
-    return HttpResponse(data)
+    '''
+
+    return HttpResponse(final_data)
+
+def take_transpose(list):
+    levels = []
+    for i in range(len(list)):  # each level
+        x = []
+        y = []
+        for j in range(len(list[i])):  # each state
+            x.append(list[i][j][0])
+            y.append(list[i][j][1])
+
+        level = [deepcopy(x), deepcopy(y)]
+        levels.append(deepcopy(level))
+    return levels

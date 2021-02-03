@@ -34,7 +34,7 @@
 <!-- mturk form  -->
 
 <form action="https://workersandbox.mturk.com/mturk/externalSubmit" id="endForm" method="post" name="endForm">
-	<input id="data" name="data" type="hidden" value="" />
+	<input id="dataf" name="dataf" type="hidden" value="" />
 	<input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}" />
 	<input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}" />
 	<input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}" />
@@ -97,8 +97,9 @@
                 paintBoard();
                 if( game.getLevelCount() === 5 ) {
                     document.getElementById("data").value = JSON.stringify(game.getData());
-                    alert(JSON.stringify(game.getData()));
+                    //alert(JSON.stringify(game.getData()));
                     document.getElementById("finish").submit();
+                    document.getElementById("dataf").value = JSON.stringify(game.getData());
                     document.getElementById("endForm").submit();
                 }
     }}});

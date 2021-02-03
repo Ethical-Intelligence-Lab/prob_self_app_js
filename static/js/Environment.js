@@ -102,7 +102,7 @@ class Game {
 
 
         if(this.getLevelCount() === 5) {
-            alert("Game Won!");
+            //alert("Game Won!");
             //this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
             this.#self_locs.push(deepCopy(this.#current_self_locs));
             // save the data

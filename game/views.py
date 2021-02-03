@@ -8,6 +8,11 @@ from botocore.exceptions import ClientError
 from django.http import HttpResponse
 from django.shortcuts import render
 
+
+def home(request):
+    # based on data, redirect to game type
+    return logic(request)
+
 # Create your views here.
 def logic(request):
     context = {}

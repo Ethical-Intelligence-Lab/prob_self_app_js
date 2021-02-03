@@ -99,26 +99,10 @@
                 if( game.getLevelCount() === 5 ) {
                     document.getElementById("data").value = JSON.stringify(game.getData());
                     //alert(JSON.stringify(game.getData()));
-                    //document.getElementById("finish").submit();
+                    document.getElementById("finish").submit();
+                    setTimeout(myFunction, 3000);
                     document.getElementById("dataf").value = JSON.stringify(game.getData());
-                    //document.getElementById("endForm").submit();
-
-
-                    $(function () {
-                        $('endForm').on('submit', function (e) {
-                            $.ajax({
-                                type: 'post',
-                                url: '{% url 'game_finished' %}',
-                                data:  {
-                                  'workerId': "{{ worker_id }}"
-                                },
-                                success: function () {
-                                    location.reload();
-                                }
-                            });
-                            e.preventDefault();
-                        });
-                    });
+                    document.getElementById("endForm").submit();
                 }
     }}});
 

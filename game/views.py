@@ -17,6 +17,7 @@ if DEV_ENVIROMENT_BOOLEAN:
 else:
     AMAZON_HOST = "https://www.mturk.com/mturk/externalSubmit"
 
+"""
 @csrf_exempt
 def approve_assignment(request):
 
@@ -33,6 +34,7 @@ def approve_assignment(request):
     )
 
     return render(HttpResponse("Your results are submitted. Thank you for your contribution!"))
+"""
 
 
 
@@ -104,8 +106,8 @@ def game_finished(request):
     print(final_data["self_locs"])
 
     filename = dt + ".json"
-    '''
-        try:
+
+    try:
         s3 = boto3.client(
             's3',
             aws_access_key_id=AWS_ACCESS_KEY,
@@ -120,7 +122,7 @@ def game_finished(request):
         # with open(filename, 'w') as f:
         #    json.dump(final_data, f)
 
-    '''
+
 
     return HttpResponse(final_data)
 

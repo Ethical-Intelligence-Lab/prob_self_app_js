@@ -24,7 +24,7 @@
      </div>
 </div>
 
-<form id = "finish" action="/game_finished/" method="POST" >
+<form id = "finish" action="{% url game_finished %}" method="POST" >
     {% csrf_token %}
     <input type="hidden" id = "data" name="data" value="" />
 </form>

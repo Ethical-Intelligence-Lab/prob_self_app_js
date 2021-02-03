@@ -36,7 +36,7 @@ def create_task(client):
         Description='Finish the game.',
         Keywords='question, answer, research, game',
         Reward='0.15',
-        MaxAssignments=5,
+        MaxAssignments=1,
         LifetimeInSeconds=172800,
         AssignmentDurationInSeconds=1200,
         AutoApprovalDelayInSeconds=14400,
@@ -69,5 +69,5 @@ def delete_hits(mturk):
         else:
             print('Deleted')
 
-#create_task(connect_mturk())
-delete_hits(connect_mturk())
+create_task(connect_mturk())
+#delete_hits(connect_mturk())

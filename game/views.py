@@ -8,16 +8,36 @@ from botocore.exceptions import ClientError
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from game.mturk import connect_mturk
+
+DEV_ENVIROMENT_BOOLEAN = True
+
+if DEV_ENVIROMENT_BOOLEAN:
+    AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit"
+else:
+    AMAZON_HOST = "https://www.mturk.com/mturk/externalSubmit"
+
+@csrf_exempt
+def approve_assignment(request):
+
+    worker_id = request.POST.get("workerId")
+    assignment_id = request.POST.get("assignmentId")
+    amazon_host = AMAZON_HOST
+    hit_id = request.POST.get("hitId")
+
+    client = connect_mturk()
+    response = client.approve_assignment(
+        AssignmentId=assignment_id,
+        RequesterFeedback='Submitted',
+        #OverrideRejection=True | False
+    )
+
+    return render(HttpResponse("Your results are submitted. Thank you for your contribution!"))
+
+
 
 @csrf_exempt
 def home(request):
-    DEV_ENVIROMENT_BOOLEAN = True
-
-    # This allows us to specify whether we are pushing to the sandbox or live site.
-    if DEV_ENVIROMENT_BOOLEAN:
-        AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit"
-    else:
-        AMAZON_HOST = "https://www.mturk.com/mturk/externalSubmit"
 
     # The following code segment can be used to check if the turker has accepted the task yet
     if request.GET.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":

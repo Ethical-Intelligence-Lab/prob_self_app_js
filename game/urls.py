@@ -31,6 +31,6 @@ urlpatterns = [
     path('logic/', views.logic, name='logic'),
     path('contingency/', views.contingency, name='contingency'),
     path('game_finished/', views.game_finished, name='game_finished'),
-    path('approve_assignment/', views.approve_assignment, name='approve_assignment'),
+    #path('approve_assignment/', views.approve_assignment, name='approve_assignment'),
 
 ]

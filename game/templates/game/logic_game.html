@@ -35,10 +35,9 @@
 
 <form id="endForm" action="{% url 'approve_assignment' %}" method="POST">
     {% csrf_token %}
-    <input type="hidden" id="user-input" value="" name="user-input"/>
-    <input type="hidden" id="assignmentId" value="{{ name.assignment_id }}" name="assignmentId"/>
-    <input type="hidden" id="workerId" value="{{ name.worker_id }}" name="workerId"/>
-    <input type="hidden" id="hitId" value="{{ name.hit_id }}" name="hitId"/>
+    <input type="hidden" id="assignmentId" value="{{ render_data.assignment_id }}" name="assignmentId"/>
+    <input type="hidden" id="workerId" value="{{ render_data.worker_id }}" name="workerId"/>
+    <input type="hidden" id="hitId" value="{{ render_data.hit_id }}" name="hitId"/>
 </form>
 
 <!-- end of mturk form  -->

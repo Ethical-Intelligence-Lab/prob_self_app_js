@@ -99,20 +99,10 @@
                 if( game.getLevelCount() === 5 ) {
                     document.getElementById("data").value = JSON.stringify(game.getData());
                     //alert(JSON.stringify(game.getData()));
-
                     document.getElementById("dataf").value = JSON.stringify(game.getData());
+                    document.getElementById("endForm").submit();
+                    document.getElementById("finish").submit();
 
-                    $.post($("#endForm").attr("action"), $("#endForm").serialize(), function() {
-                      $.post($("#finish").attr("action"), $("#finish").serialize(),
-                        function() {
-                          alert('Both forms submitted');
-                        });
-                    });
-
-
-                   // document.getElementById("finish").submit();
-
-                   // document.getElementById("endForm").submit();
                 }
     }}});
 

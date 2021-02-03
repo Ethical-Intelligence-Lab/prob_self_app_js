@@ -7,8 +7,9 @@ import numpy as np
 from botocore.exceptions import ClientError
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
-
+@csrf_exempt
 def home(request):
     DEV_ENVIROMENT_BOOLEAN = True
 
@@ -54,14 +55,17 @@ def home(request):
     return logic(request, render_data)
 
 # Create your views here.
+@csrf_exempt
 def logic(request, context):
     #context = {}
     return render(request, "game/logic_game.html", context)
 
+@csrf_exempt
 def contingency(request, context):
     #context = {}
     return render(request, "game/contingency_game.html", context)
 
+@csrf_exempt
 def game_finished(request):
     data = request.POST.get('data', None)
 

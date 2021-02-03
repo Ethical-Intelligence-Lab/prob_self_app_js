@@ -1,5 +1,7 @@
 import json
 import os
+import secrets
+import string
 from copy import deepcopy
 
 import boto3
@@ -87,9 +89,16 @@ def contingency(request, context):
     #context = {}
     return render(request, "game/contingency_game.html", context)
 
+def generate_id():
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(20))  # Form a 20-character password
+    return password
+
 @csrf_exempt
 def game_finished(request):
+    print("game finished, submitting to s3")
     data = request.POST.get('data', None)
+    worker_id = request.POST.get('workerId', None)
 
     from datetime import datetime
     dt = datetime.today().strftime('%Y-%m-%d=%H:%M:%S')
@@ -105,7 +114,9 @@ def game_finished(request):
     final_data["self_locs"] = take_transpose(final_data["self_locs"])
     print(final_data["self_locs"])
 
-    filename = dt + ".json"
+    filename = dt + "_" + worker_id + ".json"
+
+    print("writing ", filename)
 
     try:
         s3 = boto3.client(

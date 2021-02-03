@@ -33,7 +33,7 @@ def create_task(client):
     question = ExternalQuestion("https://prob-self-mturk.herokuapp.com/", frame_height=600)
     new_hit = client.create_hit(
         Title='Finish the game.',
-        Description='Finish the game.',
+        Description='Move with WASD or arrow keys.',
         Keywords='question, answer, research, game',
         Reward='0.15',
         MaxAssignments=1,

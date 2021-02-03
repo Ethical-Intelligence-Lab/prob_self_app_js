@@ -1,9 +1,9 @@
 import os
+from datetime import datetime
+
 import boto3
-from boto.mturk.connection import MTurkConnection
+
 from boto.mturk.question import ExternalQuestion
-from boto.mturk.qualification import Qualifications, PercentAssignmentsApprovedRequirement, NumberHitsApprovedRequirement
-from boto.mturk.price import Price
 
 def connect_mturk():
     region_name = 'us-east-1'
@@ -30,33 +30,44 @@ def connect_mturk():
 
 
 def create_task(client):
-    # 5 cents per HIT
-    amount = 0.05
-
-    # frame_height in pixels
-    frame_height = 800
-
-    # Here, I create two sample qualifications
-    qualifications = Qualifications()
-    qualifications.add(PercentAssignmentsApprovedRequirement(comparator="GreaterThan", integer_value="90"))
-    qualifications.add(NumberHitsApprovedRequirement(comparator="GreaterThan", integer_value="100"))
-
-    # This url will be the url of your application, with appropriate GET parameters
-    url = "https://prob-self-mturk.herokuapp.com/"
-    questionform = ExternalQuestion(url, frame_height)
-    create_hit_result = client.create_hit(
-        title="Prob Self",
-        description="This is a description",
-        keywords=["add", "some", "keywords"],
-        # duration is in seconds
-        duration= 60 * 60,
-        # max_assignments will set the amount of independent copies of the task (turkers can only see one)
-        max_assignments=1,
-        question=questionform,
-        reward=Price(amount=amount),
-        # Determines information returned by method in API, not super important
-        response_groups=('Minimal', 'HITDetail'),
-        qualifications=qualifications,
+    question = ExternalQuestion("https://prob-self-mturk.herokuapp.com/", frame_height=600)
+    new_hit = client.create_hit(
+        Title='Finish the game',
+        Description='Finish the game',
+        Keywords='question, answer, research, game',
+        Reward='0.15',
+        MaxAssignments=1,
+        LifetimeInSeconds=172800,
+        AssignmentDurationInSeconds=1200,
+        AutoApprovalDelayInSeconds=14400,
+        Question=question.get_as_xml(),  # <--- this does the trick
     )
+    print( "HITID = " + new_hit['HIT']['HITId'] )
 
-create_task(connect_mturk())
+def delete_hits(mturk):
+    # Delete HITs
+    for item in mturk.list_hits()['HITs']:
+        hit_id = item['HITId']
+        print('HITId:', hit_id)
+
+        # Get HIT status
+        status = mturk.get_hit(HITId=hit_id)['HIT']['HITStatus']
+        print('HITStatus:', status)
+
+        # If HIT is active then set it to expire immediately
+        if status == 'Assignable':
+            response = mturk.update_expiration_for_hit(
+                HITId=hit_id,
+                ExpireAt=datetime(2015, 1, 1)
+            )
+
+            # Delete the HIT
+        try:
+            mturk.delete_hit(HITId=hit_id)
+        except:
+            print('Not deleted')
+        else:
+            print('Deleted')
+
+#create_task(connect_mturk())
+#delete_hits(connect_mturk())

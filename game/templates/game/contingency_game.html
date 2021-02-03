@@ -27,6 +27,25 @@
 </form>
 
 <div id="container"></div>
+
+<!-- mturk form  -->
+
+<div id="wrapper">
+  Finish
+    <button type="button" id="submitMturk" alt="submitMturk" value=""> </button>
+    <div id="end-dialog-message" title="Ready to submit?">
+</div>
+
+<form id = "endForm" action="{{ name.amazon_host }}" method="POST">
+  <input type="hidden" id="user-input" value="" name="user-input"/>
+  <input type="hidden" id="assignmentId" value="{{ name.assignment_id }}" name="assignmentId"/>
+  <input type="hidden" id="workerId" value="{{ name.worker_id }}" name="workerId"/>
+  <input type="hidden" id="hitId" value="{{ name.hit_id }}" name="hitId"/>
+</form>
+
+<!-- end of mturk form  -->
+
+
 <script>
 
     // Construct the game
@@ -85,6 +104,37 @@
                     document.getElementById("finish").submit();
                 }
     }}});
+
+
+    //mturk submit
+    function endDialog() {
+    $( "#end-dialog-message" ).dialog({
+      resizable: false,
+      height:140,
+      modal: true,
+      buttons: {
+        "Submit Results?": function() {
+          var string = "whateverFinalResultsWeWantToPass";
+          $('input[name="user-input"]').val(string);
+          $("#endForm").submit();
+          $( this ).dialog( "close" );
+          // alert("Just in case, this blacks out the screen");
+          $("#wrapper").remove();
+          $("body").append('<div id="endsplash" style ="height:100%;width:100%;top:0px;left:0px;z-index:999;background:rgba(0,0,0,1);"> </div>');
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+
+  }
+
+  $('#submitMturk').click(function(){
+    endDialog();
+  });
+
 
 </script>
 

@@ -59,7 +59,7 @@
     $(document).ready(function(){
         document.addEventListener("keydown", keyHandler, false);
         function keyHandler(event) {
-            if (document.readyState === 'complete'&& // listen only if document is loaded
+            if (game.getLevelCount() !== 5 && document.readyState === 'complete' && // listen only if document is loaded
                 (event.key === 'w' || event.key === 'a' || event.key === 's' || event.key === 'd'
                     || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' ||
                     event.key === 'ArrowRight')) { // move
@@ -111,7 +111,6 @@
       float: left;
       height: 20px;
       width: 20px;
-      border: 1px solid #000;
     }
 
     .clear {

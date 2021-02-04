@@ -96,9 +96,11 @@ def generate_id():
 
 @csrf_exempt
 def game_finished(request):
-    print("game finished, submitting to s3")
     data = request.POST.get('data', None)
     worker_id = request.POST.get('workerId', None)
+    game_type = request.POST.get("gameType")
+
+    print("game finished, submitting to s3. ID: ", worker_id, " game type: ", game_type)
 
     from datetime import datetime
     dt = datetime.today().strftime('%Y-%m-%d=%H:%M:%S')
@@ -114,7 +116,7 @@ def game_finished(request):
     final_data["self_locs"] = take_transpose(final_data["self_locs"])
     print(final_data["self_locs"])
 
-    game_type = request.POST.get("gameType")
+
 
     filename = game_type + "/" + dt + "_" + worker_id + ".json"
 

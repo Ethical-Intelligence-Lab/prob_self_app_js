@@ -69,5 +69,5 @@ def delete_hits(mturk):
         else:
             print('Deleted')
 
-create_task(connect_mturk())
+#create_task(connect_mturk())
 #delete_hits(connect_mturk())

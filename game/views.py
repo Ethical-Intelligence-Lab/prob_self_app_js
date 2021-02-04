@@ -62,8 +62,11 @@ def home(request):
 
 # redirect to user to a game that is less played
 def redirect_to_less(request, render_data):
-    logic_count = Participant.objects.filter(game_type="logic").count()
-    contingency_count = Participant.objects.filter(game_type="contingency").count()
+    logic_count = 0
+    contingency_count = 0
+    if Participant.objects.count() < 2:
+        logic_count = Participant.objects.filter(game_type="logic").count()
+        contingency_count = Participant.objects.filter(game_type="contingency").count()
 
     rand = random.randint(0, 1)
     if logic_count == contingency_count:

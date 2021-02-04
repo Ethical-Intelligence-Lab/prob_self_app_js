@@ -24,15 +24,20 @@
      </div>
 </div>
 
+<div id="container"></div>
+
+<!-- mturk form  -->
+
 <form id = "finish" action="{% url 'game_finished' %}" method="POST" >
     {% csrf_token %}
     <input type="hidden" id = "data" name="data" value="" />
     <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}" />
 	<input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}" />
 	<input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}" />
+    <input id="gameType" name="gameType" type="hidden" value="logic" />
 </form>
 
-<div id="container"></div>
+<!-- end of mturk form  -->
 
 
 <script>

@@ -1,5 +1,6 @@
 import json
 import os
+import random
 import secrets
 import string
 from copy import deepcopy
@@ -12,33 +13,14 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from game.mturk import connect_mturk
 
+from .models import Participant
+
 DEV_ENVIROMENT_BOOLEAN = True
 
 if DEV_ENVIROMENT_BOOLEAN:
     AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit"
 else:
     AMAZON_HOST = "https://www.mturk.com/mturk/externalSubmit"
-
-"""
-@csrf_exempt
-def approve_assignment(request):
-
-    worker_id = request.POST.get("workerId")
-    assignment_id = request.POST.get("assignmentId")
-    amazon_host = AMAZON_HOST
-    hit_id = request.POST.get("hitId")
-
-    client = connect_mturk()
-    response = client.approve_assignment(
-        AssignmentId=assignment_id,
-        RequesterFeedback='Submitted',
-        #OverrideRejection=True | False
-    )
-
-    return render(HttpResponse("Your results are submitted. Thank you for your contribution!"))
-"""
-
-
 
 @csrf_exempt
 def home(request):
@@ -76,7 +58,25 @@ def home(request):
     #resp.headers['x-frame-options'] = 'this_can_be_anything'
 
     # based on data, redirect to game type
-    return logic(request, render_data)
+    return redirect_to_less(request, render_data)
+
+# redirect to user to a game that is less played
+def redirect_to_less(request, render_data):
+    logic_count = Participant.objects.filter(game_type="logic").count()
+    contingency_count = Participant.objects.filter(game_type="contingency").count()
+
+    rand = random.randint(0, 1)
+    if logic_count == contingency_count:
+        if rand == 0:
+            return logic(request, render_data)
+        else:
+            return contingency(request, render_data)
+    elif logic_count > contingency_count:
+        return contingency(request, render_data)
+    else:
+        return logic(request, render_data)
+
+
 
 # Create your views here.
 @csrf_exempt
@@ -139,9 +139,28 @@ def game_finished(request):
         "assignment_id": request.POST.get("assignmentId"),
         "worker_id": request.POST.get("workerId"),
         "hit_id": request.POST.get("hitId"),
-
+        "game_type": request.POST.get("gameType"),
     }
+
+    save_into_db(context)
+
     return render(request, "game/finished.html", context)
+
+
+def save_into_db(context):
+    data = context["data"]
+    assignment_id = context["assignment_id"]
+    worker_id = context["worker_id"]
+    hit_id = context["hit_id"]
+    game_type = context["game_type"]
+
+    participant = Participant(data=data, assignment_id=assignment_id, worker_id=worker_id, hit_id=hit_id, game_type=game_type)
+    participant.save()
+
+    print("Participant ", worker_id, " succesfully saved.")
+
+
+
 
 def take_transpose(list):
     levels = []

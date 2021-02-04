@@ -114,7 +114,9 @@ def game_finished(request):
     final_data["self_locs"] = take_transpose(final_data["self_locs"])
     print(final_data["self_locs"])
 
-    filename = dt + "_" + worker_id + ".json"
+    game_type = request.POST.get("gameType");
+
+    filename = game_type + "/" + dt + "_" + worker_id + ".json"
 
     print("writing ", filename)
 

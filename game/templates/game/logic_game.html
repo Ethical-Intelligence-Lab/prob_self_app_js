@@ -27,21 +27,12 @@
 <form id = "finish" action="{% url 'game_finished' %}" method="POST" >
     {% csrf_token %}
     <input type="hidden" id = "data" name="data" value="" />
-    <input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}" />
-</form>
-
-<div id="container"></div>
-
-<!-- mturk form  -->
-
-<form action="https://workersandbox.mturk.com/mturk/externalSubmit" id="endForm" method="post" name="endForm">
-	<input id="dataf" name="dataf" type="hidden" value="" />
-	<input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}" />
+    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}" />
 	<input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}" />
 	<input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}" />
 </form>
 
-<!-- end of mturk form  -->
+<div id="container"></div>
 
 
 <script>
@@ -98,13 +89,7 @@
                 paintBoard();
                 if( game.getLevelCount() === 5 ) {
                     document.getElementById("data").value = JSON.stringify(game.getData());
-                    //alert(JSON.stringify(game.getData()));
                     document.getElementById("finish").submit();
-                    setTimeout(function(){
-                        alert('submitting result');
-                    }, 3000);
-                    document.getElementById("dataf").value = JSON.stringify(game.getData());
-                    document.getElementById("endForm").submit();
                 }
     }}});
 

@@ -134,8 +134,14 @@ def game_finished(request):
         #    json.dump(final_data, f)
 
 
+    context = {
+        "data": request.POST.get("data"),
+        "assignment_id": request.POST.get("assignmentId"),
+        "worker_id": request.POST.get("workerId"),
+        "hit_id": request.POST.get("hitId"),
 
-    return HttpResponse(final_data)
+    }
+    return render(request, "game/finished.html", context)
 
 def take_transpose(list):
     levels = []

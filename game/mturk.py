@@ -36,7 +36,7 @@ def create_task(client):
         Description='Move with WASD or arrow keys.',
         Keywords='question, answer, research, game',
         Reward='0.15',
-        MaxAssignments=1,
+        MaxAssignments=100,
         LifetimeInSeconds=172800,
         AssignmentDurationInSeconds=1200,
         AutoApprovalDelayInSeconds=14400,

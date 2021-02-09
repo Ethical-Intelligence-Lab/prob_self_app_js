@@ -327,8 +327,8 @@ class Game {
         "wall_interactions": this.#wall_interactions, "ns_interactions": this.#ns_interactions, "map": this.#maps,
         "self_start_locs": this.#self_start_locs, "self_locs": this.#self_locs, "n_levels": this.getNumLevels() };
 
-        var data = {data: datamap}
-        return datamap;
+        var data = {"data": datamap}
+        return data;
     }
 }
 

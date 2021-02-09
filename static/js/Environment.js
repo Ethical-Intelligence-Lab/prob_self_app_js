@@ -13,7 +13,9 @@ class Game {
     #self_start_locs = []
     #self_locs = []
     #current_self_locs = []
+    #num_levels;
     constructor( gameType ) {
+        this.#num_levels = 5;
         this.#gameType = gameType;
         this.#level_count = 0;
         this.#avatarPosition = random_avatar_pos(gameType);
@@ -41,6 +43,10 @@ class Game {
 
     getGameType() {
         return this.#gameType;
+    }
+
+    getNumLevels() {
+        return this.#num_levels;
     }
 
     getBoard() {
@@ -101,7 +107,7 @@ class Game {
         this.#self_start_locs.push(JSON.parse(JSON.stringify(this.#avatar_start_position)));
 
 
-        if(this.getLevelCount() === 5) {
+        if(this.getLevelCount() === this.#num_levels) {
             //alert("Game Won!");
             //this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
             this.#self_locs.push(deepCopy(this.#current_self_locs));
@@ -317,9 +323,11 @@ class Game {
 
     getData() {
         this.#self_start_locs.pop();
-        var datamap = { action_count: this.#action_count, game_type: this.#gameType,
+        var datamap = { "steps": this.#action_count, "game_type": this.#gameType,
         "wall_interactions": this.#wall_interactions, "ns_interactions": this.#ns_interactions, "map": this.#maps,
-        "self_start_locs": this.#self_start_locs, "self_locs": this.#self_locs };
+        "self_start_locs": this.#self_start_locs, "self_locs": this.#self_locs, "n_levels": this.getNumLevels() };
+
+        var data = {data: datamap}
         return datamap;
     }
 }

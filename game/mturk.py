@@ -32,9 +32,9 @@ def connect_mturk():
 def create_task(client):
     question = ExternalQuestion("https://prob-self-mturk.herokuapp.com/", frame_height=540)
     new_hit = client.create_hit(
-        Title='Finish the game.',
-        Description=' Move with WASD keys. It might take approximately 30 secs to load the page.',
-        Keywords='question, answer, research, game',
+        Title='Finish the game (Move with WASD or arrow keys).',
+        Description='It might take approximately 30 secs to load the page.',
+        Keywords='question, answer, research, game, grid',
         Reward='0.15',
         MaxAssignments=100,
         LifetimeInSeconds=172800,

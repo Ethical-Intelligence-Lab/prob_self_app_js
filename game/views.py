@@ -113,10 +113,8 @@ def game_finished(request):
 
     final_data = json.loads(data)
 
-    final_data["self_locs"] = take_transpose(final_data["self_locs"])
-    print(final_data["self_locs"])
-
-
+    final_data["data"]["self_locs"] = take_transpose(final_data["data"]["self_locs"])
+    #print(final_data["data"])
 
     filename = game_type + "/" + dt + "_" + worker_id + ".json"
 

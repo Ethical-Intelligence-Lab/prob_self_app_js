@@ -172,7 +172,7 @@ class Game {
 
 
     change_agent() {
-        if( this.#action_count % 7 !== 0 ) {
+        if( this.getCurrentActionCount() % 7 !== 0 ) {
             return;
         }
 
@@ -180,8 +180,7 @@ class Game {
         let temp = this.#avatarPosition;
         this.getBoard()[temp[0]][temp[1]] = 0; // set avatar's old position to 0
         this.setAvatarPos(this.#ns_positions[rn]);
-        console.log("AGENT CHANGED. Current agent: " + this.#avatarPosition );
-        console.log("NS: " + this.#ns_positions );
+        //console.log("AGENT CHANGED. Current agent: " + this.#avatarPosition );
         this.getBoard()[this.#avatarPosition[0]][this.#avatarPosition[1]] = 8;
         this.#ns_positions[rn] = temp;
     }
@@ -234,24 +233,17 @@ class Game {
     move(direction) {
         if(this.getGameType() === "contingency") {
             if( this.#action_count[this.#level_count] === 0 )  { // if it is the first action, set non self sprites
-                console.log("SETTING POS OF NS");
                 this.contingency_ns_pos(); // set position of non-self sprites
-                console.log(this.#ns_positions);
             }
 
             this.move_ns_contingency(); // move non-self sprites
         } else if(this.getGameType() === "change_agent") {
             if( this.#action_count[this.#level_count] === 0 )  { // if it is the first action, set non self sprites
-                console.log("SETTING POS OF NS");
                 this.contingency_ns_pos(); // set position of non-self sprites
-                console.log(this.#ns_positions);
             }
 
             this.move_ns_change_agent(); // move non-self sprites
         }
-
-        console.log("non-self locations: " );
-        console.log(this.#ns_positions);
 
         let x = this.getAvatarPos()[0]
         let y = this.getAvatarPos()[1]
@@ -277,7 +269,6 @@ class Game {
             this.#board[new_x][new_y] = 8;
             this.#avatarPosition = [new_x, new_y];
             this.increamentActionCount();
-            console.log(this.#action_count);
             this.#current_self_locs.push(deepCopy(this.#avatarPosition));
 
         } else if( this.canMove(direction) === 2 ) {
@@ -372,9 +363,6 @@ class Game {
                 }
             }
         }
-
-        console.log("POSITIONS: ");
-        console.log(positions);
 
         let v = 2;
         let h = 2;

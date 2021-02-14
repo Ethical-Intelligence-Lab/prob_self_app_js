@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../static/js/Environment.js"> </script>
+    <meta charset="UTF-8">
+    <title>Game Page</title>
+</head>
+<body>
+
+<div class="aligner">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Logic Game:</h5>
+                <h6 id="step_count" class="card-subtitle mb-2 text-muted">Current Action Count: 0</h6>
+                <h6 id="level_count" class="card-subtitle mb-2 text-muted">Level: 0</h6>
+        </div>
+     </div>
+</div>
+
+<div id="container"></div>
+
+
+
+<script>
+
+    // Construct the game
+    let game = new Game("change_agent");
+    var markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall" }"></span>` ).join("")).join("<span class='clear'></span>");
+    document.getElementById("container").innerHTML = markup;
+
+    function paintBoard() {
+        console.log("painting");
+        markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall" }"></span>` ).join("")).join("<span class='clear'></span>");
+        document.getElementById("container").innerHTML = markup;
+    }
+
+    $(document).ready(function(){
+        document.addEventListener("keydown", keyHandler, false);
+        function keyHandler(event) {
+            if (game.getLevelCount() !== game.getNumLevels() && document.readyState === 'complete' && // listen only if document is loaded
+                (event.key === 'w' || event.key === 'a' || event.key === 's' || event.key === 'd'
+                    || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' ||
+                    event.key === 'ArrowRight')) { // move
+                let tmp;
+                switch (event.key) {
+                    case "w":
+                        tmp = 0;
+                        break;
+                    case "s":
+                        tmp = 1;
+                        break;
+                    case "a":
+                        tmp = 2;
+                        break;
+                    case "d":
+                        tmp = 3;
+                        break;
+                    case "ArrowUp":
+                        tmp = 0;
+                        break;
+                    case "ArrowDown":
+                        tmp = 1;
+                        break;
+                    case "ArrowLeft":
+                        tmp = 2;
+                        break;
+                    case "ArrowRight":
+                        tmp = 3;
+                        break;
+                }
+
+                game.move(tmp);
+                document.getElementById("step_count").textContent = "Current Action Count: " + game.getCurrentActionCount();
+                document.getElementById("level_count").textContent = "Level: " + game.getLevelCount();
+                paintBoard();
+                if( game.getLevelCount() === game.getNumLevels() ) {
+                    document.getElementById("data").value = JSON.stringify(game.getData());
+                    document.getElementById("finish").submit();
+                }
+    }}});
+
+
+</script>
+
+
+<style>
+
+    .field {
+      float: left;
+      height: 20px;
+      width: 20px;
+    }
+
+    .clear {
+      clear: both;
+      float: left;
+    }
+
+    .grass {
+      background: gray;
+    }
+
+    .wall {
+      background: black;
+    }
+
+    .avatar {
+      background: red;
+    }
+
+    .goal {
+      background: green;
+    }
+
+</style>
+
+</body>
+</html>

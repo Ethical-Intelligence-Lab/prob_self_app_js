@@ -31,7 +31,7 @@ class Game {
             let rn = rand(9);
             logic_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[rn]));
-        } else if( gameType === "contingency") {
+        } else if( gameType === "contingency" || gameType === "change_agent" ) {
             contingency_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[0]));
         }
@@ -97,7 +97,7 @@ class Game {
             this.setAvatarPos( random_avatar_pos(this.#gameType) );
             this.#avatar_start_position = this.#avatarPosition
             this.incrementLevelCount();
-        } else if(this.#gameType === 'contingency') {
+        } else if(this.#gameType === 'contingency' || this.#gameType === "change_agent" ) {
             this.setBoard(JSON.parse(JSON.stringify(this.getLevel(0))));
             this.setAvatarPos( random_avatar_pos(this.#gameType) );
             this.#avatar_start_position = this.#avatarPosition
@@ -170,6 +170,59 @@ class Game {
         }
     }
 
+
+    change_agent() {
+        if( this.#action_count % 7 !== 0 ) {
+            return;
+        }
+
+        let rn = rand(3); // 0, 1, 2
+        let temp = this.#avatarPosition;
+        this.getBoard()[temp[0]][temp[1]] = 0; // set avatar's old position to 0
+        this.setAvatarPos(this.#ns_positions[rn]);
+        console.log("AGENT CHANGED. Current agent: " + this.#avatarPosition );
+        console.log("NS: " + this.#ns_positions );
+        this.getBoard()[this.#avatarPosition[0]][this.#avatarPosition[1]] = 8;
+        this.#ns_positions[rn] = temp;
+    }
+
+    // Some of ns sprites will oscillate up and some will oscillate down
+    move_ns_change_agent() {
+        this.change_agent();
+        let action_pos_dict = [[-1,0], [1,0], [0,-1], [0,1]];
+        let cc = [0] * 4;
+        var rn;
+        var stay = false;
+        for( let i = 0; i < 3; i++ ) {
+
+            do {
+                rn = rand(4); // 0 = left, 1 = right, 2 = up, 3 = down
+
+                if(cc[rn] === 0) {
+                    cc[rn]++;
+                } else {
+                    continue;
+                }
+
+                if( cc[0] !== 0 && cc[1] !== 0 && cc[2] !== 0 && cc[3] !== 0 ) { // stay, cannot move anywhere
+                    stay = true;
+                    break;
+                }
+
+            } while( this.canMoveNs(rn, this.#ns_positions[i]) === 0 ); // iterate if ns cannot move
+
+            if( !stay ) {
+                this.#board[this.#ns_positions[i][0]][this.#ns_positions[i][1]] = 0; // set avatar's old position to grass
+
+                this.#ns_positions[i] = [this.#ns_positions[i][0] + action_pos_dict[rn][0],
+                this.#ns_positions[i][1] + action_pos_dict[rn][1]];
+
+                this.#board[this.#ns_positions[i][0]][this.#ns_positions[i][1]] = 8;
+            }
+
+        }
+    }
+
     /*
     *
     * up = 0
@@ -187,6 +240,14 @@ class Game {
             }
 
             this.move_ns_contingency(); // move non-self sprites
+        } else if(this.getGameType() === "change_agent") {
+            if( this.#action_count[this.#level_count] === 0 )  { // if it is the first action, set non self sprites
+                console.log("SETTING POS OF NS");
+                this.contingency_ns_pos(); // set position of non-self sprites
+                console.log(this.#ns_positions);
+            }
+
+            this.move_ns_change_agent(); // move non-self sprites
         }
 
         console.log("non-self locations: " );
@@ -270,6 +331,33 @@ class Game {
         }
     }
 
+    // returns 0 if the ns cannot move to the specified location, 1 if ns can move
+    canMoveNs(direction, ns) {
+        let x = ns[0]
+        let y = ns[1]
+        var next = 0;
+        switch (direction) {
+            case 0: // up
+                next = this.getBoard()[x - 1][y];
+                break;
+            case 1: // down
+                next = this.getBoard()[x + 1][y];
+                break;
+            case 2: // left
+                next = this.getBoard()[x][y - 1];
+                break;
+            case 3: // right
+                next = this.getBoard()[x][y + 1];
+                break;
+        }
+
+        if( next === 1 || next === 8 || next === 3 ) {
+            return 0;
+        } else if( next === 0 ) { // There is grass, can move
+            return 1;
+        }
+    }
+
     // Sets non-self sprite locations and directions
     // (6, 6), (14, 6), (14,14), (6, 14)
     contingency_ns_pos( direction ) {
@@ -338,7 +426,7 @@ function random_avatar_pos(gameType) {
     if( gameType === "logic") {
         let positions = [[1,1], [1,7], [7,1], [7,7]];
         return positions[rand(4)];
-    } else if( gameType === "contingency") {
+    } else if( gameType === "contingency" || gameType === "change_agent" ) {
         let positions = [[6,6], [6,14], [14,6], [14,14]];
         return positions[rand(4)];
     }

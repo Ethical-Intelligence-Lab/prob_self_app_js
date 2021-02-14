@@ -15,6 +15,8 @@ from game.mturk import connect_mturk
 
 from .models import Participant
 
+from operator import itemgetter
+
 DEV_ENVIROMENT_BOOLEAN = True
 
 if DEV_ENVIROMENT_BOOLEAN:
@@ -62,21 +64,13 @@ def home(request):
 
 # redirect to user to a game that is less played
 def redirect_to_less(request, render_data):
-    logic_count = Participant.objects.filter(game_type="logic").count()
-    contingency_count = Participant.objects.filter(game_type="contingency").count()
+    game_list = ["logic", "contingency", "change_agent"]
+    counts = []
+    for game in game_list:
+        counts.append(Participant.objects.filter(game_type=game).count())
 
-    rand = random.randint(0, 1)
-    if logic_count == contingency_count:
-        if rand == 0:
-            return logic(request, render_data)
-        else:
-            return contingency(request, render_data)
-    elif logic_count > contingency_count:
-        return contingency(request, render_data)
-    else:
-        return logic(request, render_data)
-
-
+    index = min(enumerate(counts), key=itemgetter(1))[0]
+    return globals()[game_list[index]](request, render_data)
 
 # Create your views here.
 @csrf_exempt
@@ -88,6 +82,10 @@ def logic(request, context):
 def contingency(request, context):
     #context = {}
     return render(request, "game/contingency_game.html", context)
+
+@csrf_exempt
+def change_agent(request, context):
+    return render(request, "game/change_agent_game.html", context)
 
 def generate_id():
     alphabet = string.ascii_letters + string.digits

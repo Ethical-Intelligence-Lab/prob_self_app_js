@@ -30,7 +30,7 @@ def connect_mturk():
 
 
 def create_task(client):
-    question = ExternalQuestion("https://mturk-template.herokuapp.com/", frame_height=540)
+    question = ExternalQuestion("https://prob-self-mturk.herokuapp.com/", frame_height=540)
     new_hit = client.create_hit(
         Title='Finish the game (Move with WASD or arrow keys).',
         Description='It might take approximately 30 secs to load the page.',
@@ -69,5 +69,6 @@ def delete_hits(mturk):
         else:
             print('Deleted')
 
-#create_task(connect_mturk())
+create_task(connect_mturk())
+
 #delete_hits(connect_mturk())

@@ -3,9 +3,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src='{% static "js/Environment.js" %}'> </script>
+    <script type="text/javascript" src='{% static "js/Environment.js" %}'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 
@@ -14,27 +15,35 @@
 </head>
 <body>
 
-<div class="aligner">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Logic Game:</h5>
-                <h6 id="step_count" class="card-subtitle mb-2 text-muted">Current Action Count: 0</h6>
-                <h6 id="level_count" class="card-subtitle mb-2 text-muted">Level: 0</h6>
+<div class="center">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Logic Game:</h5>
+            <h6 id="step_count" class="card-subtitle mb-2 text-muted">Current Action Count: 0</h6>
+            <h6 id="level_count" class="card-subtitle mb-2 text-muted">Level: 0</h6>
         </div>
-     </div>
+    </div>
+
+    <div id="wrap">
+        <div id="outer">
+            <div id="container">
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<div id="container"></div>
 
 <!-- mturk form  -->
 
-<form id = "finish" action="{% url 'game_finished' %}" method="POST" >
+<form id="finish" action="{% url 'game_finished' %}" method="POST">
     {% csrf_token %}
-    <input type="hidden" id = "data" name="data" value="" />
-    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}" />
-	<input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}" />
-	<input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}" />
-    <input id="gameType" name="gameType" type="hidden" value="logic" />
+    <input type="hidden" id="data" name="data" value=""/>
+    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}"/>
+    <input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}"/>
+    <input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}"/>
+    <input id="gameType" name="gameType" type="hidden" value="logic"/>
 </form>
 
 <!-- end of mturk form  -->
@@ -44,16 +53,17 @@
 
     // Construct the game
     let game = new Game("logic");
-    var markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall" }"></span>` ).join("")).join("<span class='clear'></span>");
+    var markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
     document.getElementById("container").innerHTML = markup;
 
     function paintBoard() {
-        markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall" }"></span>` ).join("")).join("<span class='clear'></span>");
+        markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
         document.getElementById("container").innerHTML = markup;
     }
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         document.addEventListener("keydown", keyHandler, false);
+
         function keyHandler(event) {
             if (game.getLevelCount() !== game.getNumLevels() && document.readyState === 'complete' && // listen only if document is loaded
                 (event.key === 'w' || event.key === 'a' || event.key === 's' || event.key === 'd'
@@ -91,43 +101,137 @@
                 document.getElementById("step_count").textContent = "Current Action Count: " + game.getCurrentActionCount();
                 document.getElementById("level_count").textContent = "Level: " + game.getLevelCount();
                 paintBoard();
-                if( game.getLevelCount() === game.getNumLevels() ) {
+                if (game.getLevelCount() === game.getNumLevels()) {
                     document.getElementById("data").value = JSON.stringify(game.getData());
                     document.getElementById("finish").submit();
                 }
-    }}});
+            }
+        }
+    });
+
+
+    let outer = document.getElementById('outer'),
+        wrapper = document.getElementById('wrap'),
+        maxWidth = outer.clientWidth,
+        maxHeight = outer.clientHeight;
+    window.addEventListener("resize", resize);
+    resize();
+
+    function resize() {
+        let scale,
+            width = window.innerWidth,
+            height = window.innerHeight,
+            isMax = width >= maxWidth && height >= maxHeight;
+
+        scale = Math.min(width / maxWidth, height / maxHeight);
+        outer.style.transform = isMax ? '' : 'scale(' + scale + ')';
+        wrapper.style.width = isMax ? '' : maxWidth * scale;
+        wrapper.style.height = isMax ? '' : maxHeight * scale;
+    }
 
 
 </script>
 
 
 <style>
+    .center {
+        margin: auto;
+        width: 50%;
+        padding: 10px;
+    }
+
+    #container {
+        margin: auto;
+        padding: 20px;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .card {
+        width: 400px;
+    }
 
     .field {
-      float: left;
-      height: 40px;
-      width: 40px;
+        float: left;
+        height: 40px;
+        width: 40px;
     }
 
     .clear {
-      clear: both;
-      float: left;
+        clear: both;
+        float: left;
     }
 
     .grass {
-      background: gray;
+        background: gray;
     }
 
     .wall {
-      background: black;
+        background: black;
     }
 
     .avatar {
-      background: red;
+        background: red;
     }
 
     .goal {
-      background: green;
+        background: green;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        background: #e6e9f0;
+        margin: 10px 0;
+    }
+
+
+    #wrap {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+    }
+
+    #outer {
+        position: relative;
+        width: 400px;
+        height: 400px;
+        transform-origin: 0% 50%;
+        border-radius: 10px;
+        box-shadow: 0px 3px 25px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    #outer:before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        height: 10px;
+    }
+
+    #profile {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        bottom: 0;
+        margin: 10px;
+        border-radius: 10px;
+        background-size: contain;
+    }
+
+    #content {
+        font-size: 20px;
+        position: absolute;
+        left: 0px;
+        bottom: 0;
+        margin: 10px 10px;
+        color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    #content div:last-child {
+        font-size: 15px;
+        opacity: 0.7;
     }
 
 </style>

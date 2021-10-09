@@ -26,6 +26,9 @@ else:
 
 @csrf_exempt
 def home(request):
+    # Check if this user has completed before
+    if Participant.objects.filter(worker_id=request.GET.get("workerId")).exists():
+        return HttpResponse("You cannot attend this experiment more than once.")
 
     # The following code segment can be used to check if the turker has accepted the task yet
     if request.GET.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
@@ -70,9 +73,11 @@ def redirect_to_less(request, render_data):
         counts.append(Participant.objects.filter(game_type=game).count())
 
     index = min(enumerate(counts), key=itemgetter(1))[0]
-    return globals()[game_list[index]](request, render_data)
+    #return globals()[game_list[index]](request, render_data)
 
-# Create your views here.
+    # Do logic only for now
+    return logic(request, render_data)
+
 @csrf_exempt
 def logic(request, context):
     #context = {}

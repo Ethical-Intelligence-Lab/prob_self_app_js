@@ -7,8 +7,8 @@ from boto.mturk.question import ExternalQuestion
 
 def connect_mturk():
     region_name = 'us-east-1'
-    aws_access_key_id = os.environ['AWS_MTURK_ID']
-    aws_secret_access_key = os.environ['AWS_MTURK_KEY']
+    aws_access_key_id = "AKIAQRC5SDWI75XCWFHR"  # os.environ['AWS_MTURK_ID']
+    aws_secret_access_key = "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"  # os.environ['AWS_MTURK_KEY']
 
     endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
 
@@ -30,7 +30,7 @@ def connect_mturk():
 
 
 def create_task(client):
-    question = ExternalQuestion("https://prob-self-mturk.herokuapp.com/", frame_height=540)
+    question = ExternalQuestion("https://mturk-template.herokuapp.com/", frame_height=540)
     new_hit = client.create_hit(
         Title='Finish the game (Move with WASD or arrow keys).',
         Description='It might take approximately 30 secs to load the page.',

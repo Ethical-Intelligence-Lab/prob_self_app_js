@@ -19,19 +19,29 @@
 <div class="center">
 
     <div class="card">
-        <div class="card-body" id="midright">
-            <h2>Consent Form:</h2>
-            <iframe src="https://ku.ethicalintelligencelab.com/consent_Form.pdf" style="width:600px; height:600px;"
-                    frameborder="0"></iframe>
+        <div class="card-body">
+            <div class="float-container">
 
-            <form id="consent">
-                <p>By selecting "I agree", you are consenting to the conditions described above.</p>
-                <input type="radio" id="agree" name="consent" value="1">
-                <label for="agree">I agree</label><br>
-                <input type="radio" id="disagree" name="consent" value="0">
-                <label for="disagree">I disagree</label><br>
-                <input type="submit" class="btn btn-success" value="Submit">
-            </form>
+                <div class="float-child" id="pdfcont">
+                    <div class="green"><h2>Consent Form:</h2>
+                        <iframe src="https://ku.ethicalintelligencelab.com/consent_Form.pdf"
+                                style="width:600px; height:600px;"
+                                frameborder="0"></iframe>
+                    </div>
+                </div>
+
+                <div class="float-child">
+                    <form id="consent">
+                        <p>By selecting "I agree", you are consenting to the conditions described.</p>
+                        <input type="radio" id="agree" name="consent" value="1">
+                        <label for="agree">I agree</label><br>
+                        <input type="radio" id="disagree" name="consent" value="0">
+                        <label for="disagree">I disagree</label><br>
+                        <input type="submit" class="btn btn-success" value="Submit">
+                    </form>
+                </div>
+
+            </div>
 
         </div>
 
@@ -57,16 +67,21 @@
 </script>
 <style>
 
-    .center {
-        margin: auto;
-        width: 50%;
-        padding: 10px;
+
+    #pdfcont {
+        width: 650px;
+        height: 650px;
     }
 
-    #midright {
-        position: absolute;
-        top: 10px;
-        right: 10px;
+    .float-container {
+        border: 3px solid #fff;
+        padding: 20px;
+    }
+
+    .float-child {
+        width: 40%;
+        float: left;
+        padding: 20px;
     }
 
 </style>

@@ -38,8 +38,8 @@ def home(request):
         # Our worker accepted the task
         print("Task accepted")
         pass
-    else:
-       return HttpResponse("404")
+#    else:
+#       return HttpResponse("404")
 
     '''
     We're creating a dict with which we'll render our template page.html

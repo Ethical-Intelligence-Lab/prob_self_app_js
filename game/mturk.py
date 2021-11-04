@@ -37,7 +37,7 @@ def create_task(client):
         Keywords='question, answer, research, game, grid',
         Reward='0.15',
         MaxAssignments=100,
-        LifetimeInSeconds=172800,
+        LifetimeInSeconds=345600,
         AssignmentDurationInSeconds=1200,
         AutoApprovalDelayInSeconds=14400,
         Question=question.get_as_xml(),  # <--- this does the trick

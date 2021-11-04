@@ -20,8 +20,9 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Instructions</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Use WASD keys to play the game. Your progress will be lost if you
-                quit without finishing the game. You should finish 100 levels. You can start!</h6>
+            <h6 class="card-subtitle mb-2 text-muted">We have intentionally not given any instructions for playing the
+                game. Your progress will be lost if you
+                quit without finishing the game. You can start!</h6>
         </div>
     </div>
 
@@ -48,9 +49,9 @@
 <form id="finish" action="{% url 'game_finished' %}" method="POST">
     {% csrf_token %}
     <input type="hidden" id="data" name="data" value=""/>
-    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}"/>
-    <input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}"/>
-    <input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}"/>
+    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignmentId }}"/>
+    <input id="workerId" name="workerId" type="hidden" value="{{ workerId }}"/>
+    <input id="hitId" name="hitId" type="hidden" value="{{ hitId }}"/>
     <input id="gameType" name="gameType" type="hidden" value="logic"/>
 </form>
 
@@ -74,21 +75,22 @@
 
         function keyHandler(event) {
             if (game.getLevelCount() !== game.getNumLevels() && document.readyState === 'complete' && // listen only if document is loaded
-                (event.key === 'w' || event.key === 'a' || event.key === 's' || event.key === 'd'
+                (event.key === 'w' || event.key === 'a' || event.key === 's' || event.key === 'd' ||
+                    event.key === 'W' || event.key === 'A' || event.key === 'S' || event.key === 'D'
                     || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' ||
                     event.key === 'ArrowRight')) { // move
                 let tmp;
                 switch (event.key) {
-                    case "w":
+                    case "w" || "W":
                         tmp = 0;
                         break;
-                    case "s":
+                    case "s" || "S":
                         tmp = 1;
                         break;
-                    case "a":
+                    case "a" || "A":
                         tmp = 2;
                         break;
-                    case "d":
+                    case "d" || "D":
                         tmp = 3;
                         break;
                     case "ArrowUp":

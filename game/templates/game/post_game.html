@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Demographics</title>
+</head>
+<body>
+
+<form id="finish" action="{% url 'game_finished' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" id="data" name="data" value=""/>
+    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}"/>
+    <input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}"/>
+    <input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}"/>
+    <input id="gameType" name="gameType" type="hidden" value="logic"/>
+</form>
+
+<div class="container h-100">
+    <div class="d-flex justify-content-center h-100">
+        <div class="user_card">
+            <div class="d-flex justify-content-center form_container">
+
+                <form id="demographics" method="POST" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+
+                    <div class="d-flex justify-content-center mt-3 login_container">
+                        <input id="submitbtn" class="btn btn-primary" type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+
+            {{ form.errors }}
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

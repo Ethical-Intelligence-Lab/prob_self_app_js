@@ -70,5 +70,4 @@ def delete_hits(mturk):
             print('Deleted')
 
 create_task(connect_mturk())
-
 #delete_hits(connect_mturk())

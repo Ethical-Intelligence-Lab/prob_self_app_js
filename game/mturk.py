@@ -7,8 +7,8 @@ from boto.mturk.question import ExternalQuestion
 
 def connect_mturk():
     region_name = 'us-east-1'
-    aws_access_key_id = "AKIAQRC5SDWI75XCWFHR"  # os.environ['AWS_MTURK_ID']
-    aws_secret_access_key = "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"  # os.environ['AWS_MTURK_KEY']
+    aws_access_key_id = os.environ['AWS_MTURK_ID']
+    aws_secret_access_key = os.environ['AWS_MTURK_KEY']
 
     endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
 

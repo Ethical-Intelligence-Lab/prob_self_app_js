@@ -4,6 +4,7 @@ import random
 import secrets
 import string
 from copy import deepcopy
+from django.utils import timezone
 
 import boto3
 from botocore.exceptions import ClientError
@@ -207,6 +208,8 @@ def save_into_db(context):
     participant.data = data
     participant.game_type = game_type
     participant.finished_game = True
+    participant.finish_dt = timezone.now()
+    participant.elapsed_sec = (participant.finish_dt - participant.accept_dt).total_seconds()
     participant.save()
 
     print("Participant ", worker_id, " succesfully saved.")

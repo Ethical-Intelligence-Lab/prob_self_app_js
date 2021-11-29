@@ -6,6 +6,8 @@ from django.db import models
 class Participant(models.Model):
     data = models.JSONField(max_length=None, null=True)
     accept_dt = models.DateTimeField(auto_now_add=True, null=True)
+    finish_dt = models.DateTimeField(null=True)
+    elapsed_sec = models.IntegerField(null=True)
     worker_id = models.CharField(max_length=100, unique=True)
     assignment_id = models.CharField(max_length=100)
     hit_id = models.CharField(max_length=100)

@@ -249,8 +249,10 @@ class Game {
             }
 
             this.move_ns_change_agent(); // move non-self sprites
-        } else {
+        } else { // Logic Game
             let poss = [[1, 1], [1, 7], [7, 1], [7, 7]];
+
+            //console.log("start pos: " + this.#avatar_start_position);
 
             function arraysEqual(a, b) {
                 for (var i = 0; i < a.length; ++i) {
@@ -261,6 +263,8 @@ class Game {
 
             const s = (a) => arraysEqual(a, this.#avatar_start_position);
             poss.splice(poss.findIndex(s), 1);
+
+            //console.log("ns positions: " + poss);
             this.#ns_positions = poss;
         }
 

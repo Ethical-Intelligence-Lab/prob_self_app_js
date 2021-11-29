@@ -17,8 +17,8 @@
 
 <div class="center">
 
-    <div class="card" id="topleft">
-        <div class="card-body">
+    <div class="alert alert-primary" role="alert">
+      <div class="card-body">
             <h5 class="card-title">Instructions</h5>
             <h6 class="card-subtitle mb-2 text-muted">We have intentionally not given any instructions for playing the
                 game. Your progress will be lost if you
@@ -69,6 +69,8 @@
     }
 
     $(document).ready(function () {
+        $('div.alert-primary').fadeIn( 500 ).delay( 5000 ).fadeOut( 700 );
+
         document.addEventListener("keydown", keyHandler, false);
 
         function keyHandler(event) {

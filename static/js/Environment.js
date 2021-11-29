@@ -28,7 +28,7 @@ class Game {
         this.#wall_interactions.push(0);
 
         if( gameType === "logic") {
-            let rn = rand(9);
+            let rn = rand(99);
             logic_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[rn]));
         } else if( gameType === "contingency" || gameType === "change_agent" ) {

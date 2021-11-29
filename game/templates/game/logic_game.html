@@ -130,12 +130,20 @@
         let scale,
             width = window.innerWidth,
             height = window.innerHeight,
-            isMax = width >= maxWidth && height >= maxHeight;
+            isMax = width >= maxWidth && height >= (maxHeight);
 
         scale = Math.min(width / maxWidth, height / maxHeight);
-        outer.style.transform = isMax ? '' : 'scale(' + scale + ')';
-        wrapper.style.width = isMax ? '' : maxWidth * scale;
-        wrapper.style.height = isMax ? '' : maxHeight * scale;
+
+        if(scale <= 1) {
+            outer.style.transform = 'scale(' + scale + ')';
+            wrapper.style.width = isMax ? '' : maxWidth * scale;
+            wrapper.style.height = isMax ? '' : maxHeight * scale;
+        }
+
+
+        if( maxWidth <= 1000 || maxHeight <= 1000 ) {
+            scale = Math.min(maxWidth, maxHeight)
+        }
     }
 
 
@@ -229,26 +237,6 @@
         position: absolute;
         bottom: 0;
         height: 10px;
-    }
-
-    #profile {
-        position: absolute;
-        width: 60px;
-        height: 60px;
-        bottom: 0;
-        margin: 10px;
-        border-radius: 10px;
-        background-size: contain;
-    }
-
-    #content {
-        font-size: 20px;
-        position: absolute;
-        left: 0px;
-        bottom: 0;
-        margin: 10px 10px;
-        color: white;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
 
     #content div:last-child {

@@ -10,9 +10,11 @@ class Game {
     #ns_interactions = [];
     #wall_interactions = [];
     #maps = [];
-    #self_start_locs = []
-    #self_locs = []
-    #current_self_locs = []
+    #self_start_locs = [];
+    #self_locs = [];
+    #ns_locs = []
+    #current_self_locs = [];
+    #current_ns_locs = [];
     #num_levels;
     constructor( gameType ) {
         this.#num_levels = 5;
@@ -21,14 +23,14 @@ class Game {
         this.#avatarPosition = random_avatar_pos(gameType);
         this.#avatar_start_position = this.#avatarPosition
         this.#self_start_locs.push(JSON.parse(JSON.stringify(this.#avatar_start_position)));
-        this.#current_self_locs.push(JSON.parse(JSON.stringify(this.#avatar_start_position)));
-        console.log(this.#avatarPosition);
+        //this.#current_self_locs.push(JSON.parse(JSON.stringify(this.#avatar_start_position)));
+        //console.log(this.#avatarPosition);
         this.#action_count.push(0);
         this.#ns_interactions.push(0);
         this.#wall_interactions.push(0);
 
         if( gameType === "logic") {
-            let rn = rand(99);
+            let rn = rand(9);
             logic_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[rn]));
         } else if( gameType === "contingency" || gameType === "change_agent" ) {
@@ -111,6 +113,7 @@ class Game {
             //alert("Game Won!");
             //this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
             this.#self_locs.push(deepCopy(this.#current_self_locs));
+            this.#ns_locs.push(deepCopy(this.#current_ns_locs));
             // save the data
         } else {
             this.#action_count.push(0);
@@ -118,7 +121,9 @@ class Game {
             this.#ns_interactions.push(0);
             //this.#self_locs.push(JSON.parse(JSON.stringify(this.#current_self_locs)))
             this.#self_locs.push(deepCopy(this.#current_self_locs));
-            this.#current_self_locs = []
+            this.#ns_locs.push(deepCopy(this.#current_ns_locs));
+            this.#current_self_locs = [];
+            this.#current_ns_locs = [];
         }
     }
 
@@ -270,6 +275,7 @@ class Game {
             this.#avatarPosition = [new_x, new_y];
             this.increamentActionCount();
             this.#current_self_locs.push(deepCopy(this.#avatarPosition));
+            this.#current_ns_locs.push(deepCopy(this.#ns_positions));
 
         } else if( this.canMove(direction) === 2 ) {
             this.nextLevel();
@@ -281,6 +287,7 @@ class Game {
             }
 
             this.#current_self_locs.push(deepCopy(this.#avatarPosition));
+            this.#current_ns_locs.push(deepCopy(this.#ns_positions));
             this.increamentActionCount();
         }
 
@@ -401,7 +408,7 @@ class Game {
         this.#self_start_locs.pop();
         var datamap = { "steps": this.#action_count, "game_type": this.#gameType,
         "wall_interactions": this.#wall_interactions, "ns_interactions": this.#ns_interactions, "map": this.#maps,
-        "self_start_locs": this.#self_start_locs, "self_locs": this.#self_locs, "n_levels": this.getNumLevels() };
+        "self_start_locs": this.#self_start_locs, "self_locs": this.#self_locs, "ns_locs": this.#ns_locs, "n_levels": this.getNumLevels() };
 
         var data = {"data": datamap}
         return data;

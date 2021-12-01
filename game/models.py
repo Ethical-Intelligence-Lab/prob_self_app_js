@@ -4,15 +4,15 @@ from django.db import models
 # Create your models here.
 
 class Participant(models.Model):
-    data = models.JSONField(max_length=None, null=True)
+    worker_id = models.CharField(max_length=100, unique=True)
+    completion_code = models.CharField(max_length=100, null=True)
+    game_type = models.CharField(max_length=50, null=True)
+    finished_game = models.BooleanField(default=False)
+    submitted_demographics = models.BooleanField(default=False)
     accept_dt = models.DateTimeField(auto_now_add=True, null=True)
     finish_dt = models.DateTimeField(null=True)
     elapsed_sec = models.IntegerField(null=True)
-    worker_id = models.CharField(max_length=100, unique=True)
-    assignment_id = models.CharField(max_length=100)
-    hit_id = models.CharField(max_length=100)
-    game_type = models.CharField(max_length=50, null=True)
-    finished_game = models.BooleanField(default=False)
+    data = models.JSONField(max_length=None, null=True)
 
     def __str__(self):
         return f" {self.worker_id} {self.accept_dt}"

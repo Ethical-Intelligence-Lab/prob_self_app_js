@@ -8,12 +8,9 @@
 </head>
 <body>
 
-<form id="play" action="{% url 'logic' %}" method="GET">
+<form id="play" action="{% url 'pre_game' %}" method="POST">
     {% csrf_token %}
-    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}"/>
-    <input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}"/>
-    <input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}"/>
-    <input id="amazon_host" name="amazon_host" type="hidden" value="{{ amazon_host }}"/>
+    <input id="worker_id" name="worker_id" type="hidden" value="{{ worker_id }}"/>
 </form>
 
 <div class="center">

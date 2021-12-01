@@ -20,8 +20,6 @@ EDU_CHOICES = ('High School or Equivalent', 'Vocational/Technical School (2 year
 
 class DemographicsForm(forms.Form):
     worker_id = forms.CharField(widget=forms.HiddenInput(), required=True)
-    hit_id = forms.CharField(widget=forms.HiddenInput(), required=True)
-    assignment_id = forms.CharField(widget=forms.HiddenInput(), required=True)
     ethnicity = forms.CharField(widget=ListTextWidget(data_list=ETHNICITY_CHOICES, name='ethnicity'), required=True)
     gender = forms.CharField(label='Gender', widget=ListTextWidget(data_list=GENDER_CHOICES_LIST, name='gender'),
                              required=True)
@@ -42,11 +40,21 @@ class DemographicsForm(forms.Form):
 
     def get_fields(self):
         return {'worker_id': self.worker_id,
-                'hit_id': self.hit_id,
-                'assignment_id': self.assignment_id,
                 'ethnicity': self.ethnicity,
                 'gender': self.gender,
                 'age': self.age,
                 'edu': self.edu,
                 'game_exp': self.game_exp
                 }
+
+class EnterWorkerIdForm(forms.Form):
+    worker_id = forms.CharField(label='Your Worker ID', required=True)
+
+    def get_fields(self):
+        return {'worker_id': self.worker_id}
+
+class EnterCompletionCodeForm(forms.Form):
+    completion_code = forms.CharField(label='Your Completion Code', required=True)
+
+    def get_fields(self):
+        return {'completion_code': self.completion_code}

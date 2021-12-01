@@ -1,6 +1,5 @@
 import json
 import os
-import random
 import secrets
 import string
 from copy import deepcopy
@@ -8,70 +7,39 @@ from django.utils import timezone
 
 import boto3
 from botocore.exceptions import ClientError
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
 from .models import Participant, Demographics
-from .forms import DemographicsForm
+from .forms import DemographicsForm, EnterWorkerIdForm, EnterCompletionCodeForm
 from datetime import datetime
 
-DEV_ENVIROMENT_BOOLEAN = True
 
-if DEV_ENVIROMENT_BOOLEAN:
-    AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit"
-else:
-    AMAZON_HOST = "https://www.mturk.com/mturk/externalSubmit"
-
-
-@csrf_exempt
 def home(request):
     # Check if this user has completed before
-    if Participant.objects.filter(worker_id=request.GET.get("workerId")).exists():
-        return HttpResponse("You cannot attend this experiment more than once.")
+    if request.method == 'GET':
+        context = {}
+        context['form'] = EnterWorkerIdForm()
+        return render(request, "game/enter_mturk.html", context)
+    if request.method == 'POST':
+        worker_id = request.POST.get('worker_id')
+        request.session['worker_id'] = worker_id
 
-    # The following code segment can be used to check if the turker has accepted the task yet
-    if request.GET.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
-        # Our worker hasn't accepted the HIT (task) yet
-        pass
-        print("You should accept the task to see the game")
-        return HttpResponse("You should accept the task to see the game")
-    elif request.GET.get("assignmentId") is not None:
-        # Our worker accepted the task
-        print("Task accepted")
-        pass
-    else:
-       return HttpResponse("404")
+        if worker_id is None:
+            return redirect('cannot_attend')
 
-    '''
-    We're creating a dict with which we'll render our template page.html
-    Note we are grabbing GET Parameters
-    In this case, I'm using someInfoToPass as a sample parameter to pass information
-    '''
+        if Participant.objects.filter(worker_id=worker_id).exists():
+            return redirect('cannot_attend')
 
-    r = random.randint(0, 99999)
+        participant = Participant(worker_id=worker_id)
+        participant.save()
 
-    render_data = {
-        "worker_id": request.GET.get("workerId") if request.GET.get("workerId") is not None else r,
-        "assignment_id": request.GET.get("assignmentId") if request.GET.get("assignmentId") is not None else r,
-        "amazon_host": AMAZON_HOST,
-        "hit_id": request.GET.get("hitId") if request.GET.get("assignmentId") is not None else r,
-    }
-
-    participant = Participant(assignment_id=render_data['assignment_id'], worker_id=render_data['worker_id'],
-                              hit_id=render_data['hit_id'], )
-    participant.save()
-    print("render data: ", render_data)
-
-    # This is particularly nasty gotcha.
-    # Without this header, your iFrame will not render in Amazon
-    # resp.headers['x-frame-options'] = 'this_can_be_anything'
-
-    # based on data, redirect to game type
-    return redirect_to_less(request, render_data)
+        # based on data, redirect to game type
+        return redirect_to_less(request)
 
 
 # redirect to user to a game that is less played
-def redirect_to_less(request, render_data):
+def redirect_to_less(request):
+    print("in redirect to less, ", request.session.get("worker_id"))
     game_list = ["logic", "contingency", "change_agent"]
     counts = []
     for game in game_list:
@@ -81,32 +49,38 @@ def redirect_to_less(request, render_data):
     # return globals()[game_list[index]](request, render_data)
 
     # Do logic only for now
-    return pre_game(request, render_data)
+    return pre_game(request)
 
 
 # Show the consent form
-@csrf_exempt
-def pre_game(request, context):
-    print("in pre game: ", context)
-    return render(request, "game/pre_game.html", context)
+def pre_game(request):
+    worker_id = request.session.get('worker_id')
+    if worker_id is None:
+        return HttpResponse("No worker id")
+
+    if request.method == "GET":
+        context = {'worker_id': worker_id}
+        return render(request, "game/pre_game.html", context)
+    else:
+        worker_id = request.POST.get('worker_id')
+        if worker_id is None:
+            return HttpResponse("No worker id")
+        return redirect("logic")
 
 
 # Demographics
-@csrf_exempt
-def post_game(request, worker_id, assignment_id, hit_id):
-    print("In post game")
+def post_game(request):
+    worker_id = request.session.get('worker_id')
     context = {}
     if request.method == "GET":
         context['form'] = DemographicsForm(
-            initial={'worker_id': worker_id, 'assignment_id': assignment_id,
-                     'hit_id': hit_id})
+            initial={'worker_id': worker_id})
 
         print("Post game (GET): ------ ---  ", context)
-        return render(request, "game/post_game.html", context)
+        return render(request, "game/demographics.html", context)
     else:
         context = request.POST.dict()
         print("Post game (POST): ------ ---  ", context)
-        context = request.POST.dict()
 
         # Save demographics
         new_demographics = Demographics(participant=Participant.objects.get(worker_id=context['worker_id']),
@@ -117,24 +91,54 @@ def post_game(request, worker_id, assignment_id, hit_id):
                                         edu=context['edu'])
         new_demographics.save()
 
-        print("Demographics saved!")
+        participant = Participant.objects.get(worker_id=worker_id)
+        participant.submitted_demographics = True
+        participant.save()
 
-        return render(request, "game/finished.html", context)
+        print("Demographics saved {}".format(worker_id))
+
+        return redirect("completion")
 
 
-@csrf_exempt
+def completion(request):
+    worker_id = request.session.get('worker_id')
+    context = {}
+    if request.method == "GET":
+        context['form'] = EnterCompletionCodeForm()
+        print("Post game (GET): ------ ---  ", context)
+        return render(request, "game/completion.html", context)
+    else:
+        completion_code = request.POST.get('completion_code')
+        p = Participant.objects.get(worker_id=worker_id)
+        p.completion_code = completion_code
+        request.session['completion_code'] = completion_code
+        p.save()
+        return redirect("success")
+
+
+def success(request):
+    worker_id = request.session.get('worker_id')
+    completion_code = request.session.get('completion_code')
+
+    return render(request, "game/success.html", {'worker_id': worker_id, 'completion_code': completion_code})
+
+def cannot_attend(request):
+    worker_id = request.session.get('worker_id')
+
+    return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+
 def logic(request):
-    context = request.GET.dict()
+    worker_id = request.session.get('worker_id')
+    context = {'worker_id': worker_id}
     print("in logic game: ", context)
     return render(request, "game/logic_game.html", context)
 
 
-@csrf_exempt
 def contingency(request, context):
     return render(request, "game/contingency_game.html", context)
 
 
-@csrf_exempt
 def change_agent(request, context):
     return render(request, "game/change_agent_game.html", context)
 
@@ -145,14 +149,13 @@ def generate_id():
     return password
 
 
-@csrf_exempt
+# Save the game data and send to completion code page
 def game_finished(request):
     data = request.POST.get('data', None)
-    worker_id = request.POST.get('workerId', None)
+    worker_id = request.POST.get('worker_id', None)
     game_type = request.POST.get("gameType")
 
     print("in game finished: ", request.POST)
-
     print("Game finished, submitting to s3. ID: ", worker_id, " - Game type: ", game_type)
 
     dt = datetime.today().strftime('%Y-%m-%d=%H:%M:%S')
@@ -163,10 +166,11 @@ def game_finished(request):
     final_data = json.loads(data)
 
     final_data["data"]["self_locs"] = take_transpose(final_data["data"]["self_locs"])
-    #final_data["data"]["ns_locs"] = take_transpose(final_data["data"]["ns_locs"])
-    filename = game_type + "/" + dt + "_" + worker_id + ".json"
+    filename = game_type + "/" + worker_id + "_" + dt + ".json"
 
     print("writing ", filename)
+    #with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
+        #json.dump(final_data, outfile)
 
     try:
         s3 = boto3.client(
@@ -185,18 +189,14 @@ def game_finished(request):
 
     context = {
         "data": request.POST.get("data"),
-        "assignment_id": request.POST.get("assignmentId"),
-        "worker_id": request.POST.get("workerId"),
-        "hit_id": request.POST.get("hitId"),
+        "worker_id": request.POST.get("worker_id"),
         "game_type": request.POST.get("gameType"),
     }
-
-    print(context)
 
     save_into_db(context)
 
     # Show demographics
-    return redirect('/post_game/{}/{}/{}/'.format(context['worker_id'], context['assignment_id'], context['hit_id']), permanent=True)
+    return redirect('/post_game/', permanent=True)
 
 
 def save_into_db(context):

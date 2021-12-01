@@ -11,20 +11,15 @@
 <form id="finish" action="{% url 'game_finished' %}" method="POST">
     {% csrf_token %}
     <input type="hidden" id="data" name="data" value=""/>
-    <input id="assignmentId" name="assignmentId" type="hidden" value="{{ assignment_id }}"/>
-    <input id="workerId" name="workerId" type="hidden" value="{{ worker_id }}"/>
-    <input id="hitId" name="hitId" type="hidden" value="{{ hit_id }}"/>
+    <input id="worker_id" name="worker_id" type="hidden" value="{{ worker_id }}"/>
     <input id="gameType" name="gameType" type="hidden" value="logic"/>
 </form>
 
-<div class="container h-100">
-    <div class="d-flex justify-content-center h-100">
-        <div class="user_card">
-            <div class="d-flex justify-content-center">
-                <h3 id="form-title">Before finishing, please answer the questions below.</h3>
-            </div>
-            <div class="d-flex justify-content-center form_container">
-
+<div class="d-flex justify-content-center h-100">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Before finishing, please answer the questions below.</h4>
+            <form id="before_consent" method="POST" action="">
                 <form id="demographics" method="POST" action="">
                     {% csrf_token %}
                     {{ form.as_p }}
@@ -34,11 +29,12 @@
                         <input id="submitbtn" class="btn btn-primary" type="submit" value="Submit">
                     </div>
                 </form>
-            </div>
 
-            {{ form.errors }}
+                {{ form.errors }}
 
+            </form>
         </div>
+
     </div>
 </div>
 

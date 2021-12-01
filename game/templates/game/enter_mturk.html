@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Demographics</title>
+</head>
+<body>
+
+
+<div class="d-flex justify-content-center h-100">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Please enter your MTURK worker id below:</h4>
+            <h6 class="card-subtitle mb-2 text-muted">You may not receive your payment if you enter incorrectly</h6>
+            <form id="before_consent" method="POST" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+
+                <div class="d-flex justify-content-center mt-3 login_container">
+                    <input id="submitbtn" class="btn btn-primary" type="submit" value="Submit">
+                </div>
+            </form>
+        </div>
+
+        {{ form.errors }}
+    </div>
+</div>
+
+</body>
+</html>

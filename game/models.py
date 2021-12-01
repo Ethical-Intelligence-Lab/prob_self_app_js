@@ -8,7 +8,6 @@ class Participant(models.Model):
     completion_code = models.CharField(max_length=100, null=True)
     game_type = models.CharField(max_length=50, null=True)
     finished_game = models.BooleanField(default=False)
-    submitted_demographics = models.BooleanField(default=False)
     accept_dt = models.DateTimeField(auto_now_add=True, null=True)
     finish_dt = models.DateTimeField(null=True)
     elapsed_sec = models.IntegerField(null=True)

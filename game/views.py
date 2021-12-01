@@ -49,7 +49,7 @@ def redirect_to_less(request):
     # return globals()[game_list[index]](request, render_data)
 
     # Do logic only for now
-    return pre_game(request)
+    return redirect('pre_game')
 
 
 # Show the consent form
@@ -67,9 +67,9 @@ def pre_game(request):
             return HttpResponse("No worker id")
         return redirect("logic")
 
-
+"""
 # Demographics
-def post_game(request):
+def demographics(request):
     worker_id = request.session.get('worker_id')
     context = {}
     if request.method == "GET":
@@ -98,6 +98,9 @@ def post_game(request):
         print("Demographics saved {}".format(worker_id))
 
         return redirect("completion")
+
+"""
+
 
 
 def completion(request):
@@ -149,7 +152,7 @@ def generate_id():
     return password
 
 
-# Save the game data and send to completion code page
+# Save the game data and send to completion input page
 def game_finished(request):
     data = request.POST.get('data', None)
     worker_id = request.POST.get('worker_id', None)
@@ -169,8 +172,8 @@ def game_finished(request):
     filename = game_type + "/" + worker_id + "_" + dt + ".json"
 
     print("writing ", filename)
-    #with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
-        #json.dump(final_data, outfile)
+    with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
+        json.dump(final_data, outfile)
 
     try:
         s3 = boto3.client(
@@ -195,8 +198,8 @@ def game_finished(request):
 
     save_into_db(context)
 
-    # Show demographics
-    return redirect('/post_game/', permanent=True)
+    # Go to completion
+    return redirect('/completion/', permanent=True)
 
 
 def save_into_db(context):

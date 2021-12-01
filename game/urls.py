@@ -37,5 +37,6 @@ urlpatterns = [
     path('completion/', views.completion, name='completion'),
     path('success/', views.success, name='success'),
     path('cannot_attend/', views.cannot_attend, name='cannot_attend'),
+    path('KmCFoxsrVcjPqaHqxqat/<str:worker_id>', views.register_participant, name='register_participant')
 
 ]

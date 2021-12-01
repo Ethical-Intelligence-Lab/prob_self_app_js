@@ -7,7 +7,7 @@ from django.utils import timezone
 
 import boto3
 from botocore.exceptions import ClientError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import Participant, Demographics
 from .forms import DemographicsForm, EnterWorkerIdForm, EnterCompletionCodeForm
@@ -27,14 +27,26 @@ def home(request):
         if worker_id is None:
             return redirect('cannot_attend')
 
-        if Participant.objects.filter(worker_id=worker_id).exists():
+        # Participant does not exist
+        if not Participant.objects.filter(worker_id=worker_id).exists():
             return redirect('cannot_attend')
 
-        participant = Participant(worker_id=worker_id)
-        participant.save()
+        # Participant has completed the game before
+        p = Participant.objects.get(worker_id=worker_id)
+        if p.finished_game:
+            return redirect('cannot_attend')
 
         # based on data, redirect to game type
         return redirect_to_less(request)
+
+
+def register_participant(request, worker_id):
+    try:
+        participant = Participant(worker_id=worker_id)
+        participant.save()
+    except:
+        return HttpResponse("False")
+    return HttpResponse("True")
 
 
 # redirect to user to a game that is less played
@@ -49,7 +61,7 @@ def redirect_to_less(request):
     # return globals()[game_list[index]](request, render_data)
 
     # Do logic only for now
-    return redirect('pre_game')
+    return redirect('logic')
 
 
 # Show the consent form
@@ -66,6 +78,7 @@ def pre_game(request):
         if worker_id is None:
             return HttpResponse("No worker id")
         return redirect("logic")
+
 
 """
 # Demographics
@@ -102,7 +115,6 @@ def demographics(request):
 """
 
 
-
 def completion(request):
     worker_id = request.session.get('worker_id')
     context = {}
@@ -124,6 +136,7 @@ def success(request):
     completion_code = request.session.get('completion_code')
 
     return render(request, "game/success.html", {'worker_id': worker_id, 'completion_code': completion_code})
+
 
 def cannot_attend(request):
     worker_id = request.session.get('worker_id')
@@ -171,8 +184,8 @@ def game_finished(request):
     final_data["data"]["self_locs"] = take_transpose(final_data["data"]["self_locs"])
     filename = game_type + "/" + worker_id + "_" + dt + ".json"
 
-    #print("writing ", filename)
-    #with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
+    # print("writing ", filename)
+    # with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
     #    json.dump(final_data, outfile)
 
     try:

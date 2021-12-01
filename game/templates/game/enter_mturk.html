@@ -13,7 +13,6 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Please enter your MTURK worker id below:</h4>
-            <h6 class="card-subtitle mb-2 text-muted">You may not receive your payment if you enter incorrectly</h6>
             <form id="before_consent" method="POST" action="">
                 {% csrf_token %}
                 {{ form.as_p }}

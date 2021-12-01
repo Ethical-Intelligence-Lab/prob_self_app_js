@@ -27,12 +27,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['prob-self-mturk.herokuapp.com', '127.0.0.1']
 
-
-# For mturk:
-X_FRAME_OPTIONS = 'ALLOWALL'
-# For mturk:
-XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
-
 # Application definition
 
 INSTALLED_APPS = [

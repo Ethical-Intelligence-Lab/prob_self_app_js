@@ -171,9 +171,9 @@ def game_finished(request):
     final_data["data"]["self_locs"] = take_transpose(final_data["data"]["self_locs"])
     filename = game_type + "/" + worker_id + "_" + dt + ".json"
 
-    print("writing ", filename)
-    with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
-        json.dump(final_data, outfile)
+    #print("writing ", filename)
+    #with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
+    #    json.dump(final_data, outfile)
 
     try:
         s3 = boto3.client(
@@ -183,7 +183,7 @@ def game_finished(request):
         )
 
         body = json.dumps(final_data).encode()
-        s3.put_object(Body=body, Bucket='prob-self-data-us', Key=filename)
+        s3.put_object(Body=body, Bucket='probself-data-raw', Key=filename)
 
     except ClientError as e:
         print("Client error.")

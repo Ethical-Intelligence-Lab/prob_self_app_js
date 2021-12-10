@@ -61,7 +61,7 @@ def redirect_to_less(request):
     # return globals()[game_list[index]](request, render_data)
 
     # Do logic only for now
-    return redirect('logic')
+    return redirect('contingency')
 
 
 # Show the consent form
@@ -151,7 +151,10 @@ def logic(request):
     return render(request, "game/logic_game.html", context)
 
 
-def contingency(request, context):
+def contingency(request):
+    worker_id = request.session.get('worker_id')
+    context = {'worker_id': worker_id}
+    print("in contingency game: ", context)
     return render(request, "game/contingency_game.html", context)
 
 

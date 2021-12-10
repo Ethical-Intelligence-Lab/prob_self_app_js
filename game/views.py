@@ -148,6 +148,15 @@ def logic(request):
     worker_id = request.session.get('worker_id')
     if worker_id is None:
         return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    # Participant does not exist
+    if not Participant.objects.filter(worker_id=worker_id).exists():
+        return redirect('cannot_attend')
+
+    p = Participant.objects.get(worker_id=worker_id)
+    if p.finished_game:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
     context = {'worker_id': worker_id}
     print("in logic game: ", context)
     return render(request, "game/logic_game.html", context)
@@ -157,6 +166,15 @@ def contingency(request):
     worker_id = request.session.get('worker_id')
     if worker_id is None:
         return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    # Participant does not exist
+    if not Participant.objects.filter(worker_id=worker_id).exists():
+        return redirect('cannot_attend')
+
+    p = Participant.objects.get(worker_id=worker_id)
+    if p.finished_game:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
     context = {'worker_id': worker_id}
     print("in contingency game: ", context)
     return render(request, "game/contingency_game.html", context)

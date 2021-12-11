@@ -49,7 +49,7 @@
     {% csrf_token %}
     <input type="hidden" id="data" name="data" value=""/>
     <input id="worker_id" name="worker_id" type="hidden" value="{{ worker_id }}"/>
-    <input id="gameType" name="gameType" type="hidden" value="change_agent"/>
+    <input id="gameType" name="gameType" type="hidden" value="shuffle_keys"/>
 </form>
 
 <!-- end of mturk form  -->
@@ -58,7 +58,7 @@
 <script>
 
     // Construct the game
-    let game = new Game("change_agent");
+    let game = new Game("shuffle_keys");
     var markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
     document.getElementById("container").innerHTML = markup;
 

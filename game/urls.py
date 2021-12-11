@@ -31,6 +31,7 @@ urlpatterns = [
     path('logic/', views.logic, name='logic'),
     path('contingency/', views.contingency, name='contingency'),
     path('change_agent/', views.change_agent, name='change_agent'),
+    path('shuffle_keys/', views.shuffle_keys, name='shuffle_keys'),
     path('game_finished/', views.game_finished, name='game_finished'),
     path('pre_game/', views.pre_game, name='pre_game'),
     #path('demographics/', views.demographics, name='demographics'),

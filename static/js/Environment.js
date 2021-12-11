@@ -16,6 +16,7 @@ class Game {
     #current_self_locs = [];
     #current_ns_locs = [];
     #num_levels;
+    #shuffle_key_map;
 
     constructor(gameType) {
         this.#num_levels = 100;
@@ -29,12 +30,13 @@ class Game {
         this.#action_count.push(0);
         this.#ns_interactions.push(0);
         this.#wall_interactions.push(0);
+        this.shuffle_key_mappings();
 
         if (gameType === "logic") {
             let rn = rand(9);
             logic_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[rn]));
-        } else if (gameType === "contingency" || gameType === "change_agent") {
+        } else if (gameType === "contingency" || gameType === "change_agent" || gameType === "shuffle_keys") {
             contingency_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[0]));
         }
@@ -100,11 +102,15 @@ class Game {
             this.setAvatarPos(random_avatar_pos(this.#gameType));
             this.#avatar_start_position = this.#avatarPosition
             this.incrementLevelCount();
-        } else if (this.#gameType === 'contingency' || this.#gameType === "change_agent") {
+        } else if (this.#gameType === 'contingency' || this.#gameType === "change_agent" || this.#gameType === "shuffle_keys") {
             this.setBoard(JSON.parse(JSON.stringify(this.getLevel(0))));
             this.setAvatarPos(random_avatar_pos(this.#gameType));
             this.#avatar_start_position = this.#avatarPosition
             this.incrementLevelCount();
+
+            if (this.#gameType === "shuffle_keys") {
+                this.shuffle_key_mappings();
+            }
         }
 
         this.#self_start_locs.push(JSON.parse(JSON.stringify(this.#avatar_start_position)));
@@ -126,6 +132,11 @@ class Game {
             this.#current_self_locs = [];
             this.#current_ns_locs = [];
         }
+    }
+
+    shuffle_key_mappings() {
+        let random_array = [0, 1, 2, 3];
+        this.#shuffle_key_map = rshuffle(random_array);
     }
 
     // Some of ns sprites will oscillate up and some will oscillate down
@@ -237,7 +248,11 @@ class Game {
     *
     */
     move(direction) {
-        if (this.getGameType() === "contingency") {
+        if (this.getGameType() === "contingency" || this.getGameType() === "shuffle_keys") {
+            if (this.getGameType() === "shuffle_keys") {
+                direction = this.#shuffle_key_map[direction];
+            }
+
             if (this.#action_count[this.#level_count] === 0) { // if it is the first action, set non self sprites
                 this.contingency_ns_pos(); // set position of non-self sprites
             }
@@ -447,10 +462,28 @@ function random_avatar_pos(gameType) {
     if (gameType === "logic") {
         let positions = [[1, 1], [1, 7], [7, 1], [7, 7]];
         return positions[rand(4)];
-    } else if (gameType === "contingency" || gameType === "change_agent") {
+    } else if ((gameType === "contingency") || (gameType === "change_agent") || (gameType === "shuffle_keys")) {
         let positions = [[6, 6], [6, 14], [14, 6], [14, 14]];
         return positions[rand(4)];
     }
+}
+
+function rshuffle(array) {
+    let currentIndex = array.length, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex !== 0) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
 }
 
 function rand(level_amt) {

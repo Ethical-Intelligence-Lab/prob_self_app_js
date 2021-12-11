@@ -48,6 +48,14 @@ def register_participant(request, worker_id):
         return HttpResponse("False")
     return HttpResponse("True")
 
+def finished_survey(request, worker_id):
+    if not Participant.objects.filter(worker_id=worker_id).exists():
+        return HttpResponse("False")
+
+    participant = Participant.objects.get(worker_id=worker_id)
+    participant.finished_survey = True
+    participant.save()
+    return HttpResponse("True")
 
 # redirect to user to a game that is less played
 def redirect_to_less(request):

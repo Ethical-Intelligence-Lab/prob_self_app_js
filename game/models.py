@@ -12,6 +12,7 @@ class Participant(models.Model):
     finish_dt = models.DateTimeField(null=True)
     elapsed_sec = models.IntegerField(null=True)
     data = models.JSONField(max_length=None, null=True)
+    finished_survey = models.BooleanField(default=False)
 
     def __str__(self):
         return f" {self.worker_id} {self.accept_dt}"

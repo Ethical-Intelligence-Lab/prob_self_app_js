@@ -69,7 +69,7 @@ def redirect_to_less(request):
     # return globals()[game_list[index]](request, render_data)
 
     # Do logic only for now
-    return redirect('contingency')
+    return redirect('shuffle_keys')
 
 
 # Show the consent form

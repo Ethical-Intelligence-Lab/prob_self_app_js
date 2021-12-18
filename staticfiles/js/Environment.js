@@ -206,7 +206,7 @@ class Game {
     move_ns_change_agent() {
         this.change_agent();
         let action_pos_dict = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-        let cc = [0] * 4;
+        let cc = [0, 0, 0, 0];
         var rn;
         var stay = false;
         for (let i = 0; i < 3; i++) {
@@ -216,8 +216,6 @@ class Game {
 
                 if (cc[rn] === 0) {
                     cc[rn]++;
-                } else {
-                    continue;
                 }
 
                 if (cc[0] !== 0 && cc[1] !== 0 && cc[2] !== 0 && cc[3] !== 0) { // stay, cannot move anywhere

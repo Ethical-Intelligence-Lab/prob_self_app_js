@@ -277,32 +277,14 @@ def game_finished(request):
 
     dt = datetime.today().strftime('%Y-%m-%d=%H:%M:%S')
 
-    AWS_ACCESS_KEY = os.environ['AWS_ID']
-    AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY']
-
     final_data = json.loads(data)
 
     final_data["data"]["self_locs"] = take_transpose(final_data["data"]["self_locs"])
     filename = game_type + "/" + worker_id + "_" + dt + ".json"
 
-    # print("writing ", filename)
-    # with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
-    #    json.dump(final_data, outfile)
-
-    try:
-        s3 = boto3.client(
-            's3',
-            aws_access_key_id=AWS_ACCESS_KEY,
-            aws_secret_access_key=AWS_SECRET_KEY
-        )
-
-        body = json.dumps(final_data).encode()
-        s3.put_object(Body=body, Bucket='probself-data-raw', Key=filename)
-
-    except ClientError as e:
-        print("Client error.")
-        # with open(filename, 'w') as f:
-        #    json.dump(final_data, f)
+    print("writing ", filename)
+    with open(worker_id + "_" + dt + ".json", 'w+') as outfile:
+        json.dump(final_data, outfile)
 
     context = {
         "data": request.POST.get("data"),

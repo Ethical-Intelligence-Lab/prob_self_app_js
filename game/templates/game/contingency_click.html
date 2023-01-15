@@ -109,16 +109,19 @@
 
                 if(game.getLevelCount() > parseInt($('#level_count').text().split(': ')[1])) { // Next Level
                     if(!clicked) {
-                        alert("Alert: Please click on the square you are controlling at least once, at the beginning of each level.")
+                        alert("Alert: You did not select a square. Please click on the square you are controlling, once in each level.")
                     }
 
                     clicked = false;
                 }
                 document.getElementById("level_count").textContent = "Level: " + game.getLevelCount();
                 paintBoard();
-                if (game.getLevelCount() === game.getNumLevels()) {
+                if (game.getLevelCount() === game.getNumLevels()) { // Finished game, save data
                     document.removeEventListener("keydown", keyHandler, false);
-                    document.getElementById("data").value = JSON.stringify(game.getData());
+
+                    let game_data = game.getData();
+                    game_data['selectedAgents'] = selectedAgents;
+                    document.getElementById("data").value = JSON.stringify(game_data);
                     document.getElementById("finish").submit();
                 }
             }
@@ -180,7 +183,7 @@
         document.getElementById("step_count").textContent = "Current Action Count: " + game.getCurrentActionCount();
         document.getElementById("level_count").textContent = "Level: " + game.getLevelCount();
         paintBoard();
-        if (game.getLevelCount() === game.getNumLevels()) {
+        if (game.getLevelCount() === game.getNumLevels()) { // Finished game, save data
             document.removeEventListener('touchstart', handleTouchStart, false);
             document.removeEventListener('touchmove', handleTouchMove, false);
             document.getElementById("data").value = JSON.stringify(game.getData());

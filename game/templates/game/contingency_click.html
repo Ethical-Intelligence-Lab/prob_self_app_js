@@ -25,8 +25,8 @@
                 <h6 class="card-subtitle mb-2 text-muted">- Please use the arrow keys to play the game.</h6>
                 <h6 class="card-subtitle mb-2 text-muted">- Your progress will be lost if you
                     quit/refresh without finishing the game.</h6>
-                <b><h5 id="step_count" class="card-subtitle mb-2 text">Current Action Count: 0</h5></b>
-                <b><h5 id="level_count" class="card-subtitle mb-2 text">LEVEL: 0</h5></b>
+                <h5 id="step_count" style="font-weight: bold" class="card-subtitle mb-2 text">Current Action Count: 0</h5>
+                <h5 id="level_count" style="font-weight: bold" class="card-subtitle mb-2 text">LEVEL: 0</h5>
             </div>
         </div>
         <div id="outer">
@@ -108,7 +108,7 @@
 
                 if (game.getLevelCount() > parseInt($('#level_count').text().split(': ')[1])) { // Next Level
                     if (!clicked) {
-                        alert("Alert: You did not select a square. Please click on the square you are controlling, once in each level.")
+                        alert("Alert: You did not select a square. After this level, please click on the square you are controlling, once in each level.")
                     }
 
                     clicked = false;

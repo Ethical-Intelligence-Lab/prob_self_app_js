@@ -1,3 +1,161 @@
+class MockSelf {  // Used in the perturbation game
+    #navigating;
+    #location;
+    #action_pos_dict = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+
+    constructor(location) {
+        this.#navigating = true;
+        this.#location = location;
+    }
+
+    set_location(loc) {
+        this.#location = loc;
+    }
+
+    get_location() {
+        return (this.#location);
+    }
+
+    is_navigating() {
+        return (this.#navigating);
+    }
+
+    random_move(move_choices, board) {
+        console.log('Randomly moving');
+        var rn;
+        var stay;
+        let cc = new Array(move_choices.length).fill(0);
+        do {
+            // Pick a random direction to move
+            rn = move_choices[Math.floor(Math.random() * move_choices.length)];
+
+            if (cc[rn] === 0) {
+                cc[rn]++;
+            }
+
+            if (cc.every(item => item !== 0)) { // stay, cannot move anywhere
+                stay = true;
+                break;
+            }
+
+        } while (!this.canMove(rn, board)); // iterate if ns cannot move
+
+        if (!stay) {
+            board[this.#location[0]][this.#location[1]] = 0; // set avatar's old position to grass
+
+            this.#location = [this.#location[0] + this.#action_pos_dict[rn][0],
+                this.#location[1] + this.#action_pos_dict[rn][1]];
+
+            board[this.#location[0]][this.#location[1]] = 8;
+        }
+    }
+
+    // Moving the mock self towards the reward or if not in navigation mode, moves randomly.
+    move(board) {
+        let move_choices = [0, 1, 2, 3];
+        let dist_vertical = 10 - this.#location[0];
+        let dist_horiz = 10 - this.#location[1];
+        let vertical_or_horizontal = rand(2);
+        if ((dist_horiz === 0 && (dist_vertical === -1 || dist_vertical === 1)) || (
+            dist_vertical === 0 && (dist_horiz === 1 || dist_horiz === -1))) {
+            this.#navigating = false;
+            if (dist_vertical === -1) {
+                move_choices = [0, 2, 3]; // Cannot move down
+            } else if (dist_vertical === 1) {
+                move_choices = [1, 2, 3]; // Cannot move up
+            } else if (dist_horiz === -1) {
+                move_choices = [0, 1, 2];
+            } else if (dist_horiz === 1) {
+                move_choices = [0, 1, 3];
+            }
+        }
+
+        if (this.is_navigating()) {
+            console.log('Navigating');
+
+            // Navigate to reward
+            function check_vertical() {
+                if (dist_vertical > 0) {
+                    return 1;
+                } else if (dist_vertical < 0) {
+                    return 0;
+                } else {
+                    check_horizontal();
+                }
+            }
+
+            function check_horizontal() {
+                if (dist_horiz > 0) {
+                    return 3;
+                } else if (dist_horiz < 0) {
+                    return 2;
+                } else {
+                    return check_vertical();
+                }
+            }
+
+            if (vertical_or_horizontal === 1) {
+                let move_dir = check_vertical();
+                if (this.canMove(move_dir, board)) {
+                    board[this.#location[0]][this.#location[1]] = 0; // set avatar's old position to grass
+
+                    this.#location = [this.#location[0] + this.#action_pos_dict[move_dir][0],
+                        this.#location[1] + this.#action_pos_dict[move_dir][1]];
+
+                    board[this.#location[0]][this.#location[1]] = 8;
+                }
+            } else {
+                let move_dir = check_horizontal();
+                if (this.canMove(move_dir, board)) {
+                    board[this.#location[0]][this.#location[1]] = 0; // set avatar's old position to grass
+
+                    this.#location = [this.#location[0] + this.#action_pos_dict[move_dir][0],
+                        this.#location[1] + this.#action_pos_dict[move_dir][1]];
+
+                    board[this.#location[0]][this.#location[1]] = 8;
+                }
+            }
+        } else {
+            // Move randomly
+            this.random_move(move_choices, board)
+        }
+    }
+
+    // Checks if the mock self can move to the specified location
+    canMove(direction, board) {
+        // returns 0 if the ns cannot move to the specified location, 1 if ns can move
+
+        let x = this.#location[0];
+        let y = this.#location[1];
+        var next = 0;
+        switch (direction) {
+            case 0: // up
+                next = board[x - 1][y];
+                break;
+            case 1: // down
+                next = board[x + 1][y];
+                break;
+            case 2: // left
+                next = board[x][y - 1];
+                break;
+            case 3: // right
+                next = board[x][y + 1];
+                break;
+        }
+
+        if (next === 1 || next === 8 || next === 3) {
+            return 0;
+        } else if (next === 0) { // There is grass, can move
+            return 1;
+        }
+
+    }
+
+    navigate(board) {  // Randomly navigate towards the reward, given the board
+
+    }
+}
+
 class Game {
     #board;
     #level_count;
@@ -17,6 +175,7 @@ class Game {
     #current_ns_locs = [];
     #num_levels;
     #shuffle_key_map;
+    #mockSelf;
 
     constructor(gameType) {
         this.#num_levels = 100;
@@ -36,9 +195,17 @@ class Game {
             let rn = rand(9);
             logic_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[rn]));
-        } else if (gameType === "contingency" || gameType === "change_agent" || gameType === "shuffle_keys") {
+        } else if (gameType === "contingency" || gameType === "change_agent" || gameType === "shuffle_keys" ||
+            gameType === "change_agent_perturbed") {
             contingency_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[0]));
+
+            if (gameType === "change_agent_perturbed") {  // Construct the mock self
+                this.#mockSelf = new MockSelf(random_avatar_pos(gameType, true));
+
+                // Set mock self's position on the board
+                this.#board[this.#mockSelf.get_location()[0]][this.#mockSelf.get_location()[1]] = 8;
+            }
         }
     }
 
@@ -102,7 +269,8 @@ class Game {
             this.setAvatarPos(random_avatar_pos(this.#gameType));
             this.#avatar_start_position = this.#avatarPosition
             this.incrementLevelCount();
-        } else if (this.#gameType === 'contingency' || this.#gameType === "change_agent" || this.#gameType === "shuffle_keys") {
+        } else if (this.#gameType === 'contingency' || this.#gameType === "change_agent" ||
+            this.#gameType === "shuffle_keys" || this.#gameType === "change_agent_perturbed") {
             this.setBoard(JSON.parse(JSON.stringify(this.getLevel(0))));
             this.setAvatarPos(random_avatar_pos(this.#gameType));
             this.#avatar_start_position = this.#avatarPosition
@@ -110,6 +278,13 @@ class Game {
 
             if (this.#gameType === "shuffle_keys") {
                 this.shuffle_key_mappings();
+            }
+
+            if (this.#gameType === "change_agent_perturbed") {
+                this.#mockSelf = new MockSelf(random_avatar_pos(this.#gameType, true));
+
+                // Set mock self's position on the board
+                this.#board[this.#mockSelf.get_location()[0]][this.#mockSelf.get_location()[1]] = 8;
             }
         }
 
@@ -202,14 +377,13 @@ class Game {
         this.#ns_positions[rn] = temp;
     }
 
-    // Some of ns sprites will oscillate up and some will oscillate down
     move_ns_change_agent() {
         this.change_agent();
         let action_pos_dict = [[-1, 0], [1, 0], [0, -1], [0, 1]];
         let cc = [0, 0, 0, 0];
         var rn;
         var stay = false;
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {  // Each non-self
 
             do {
                 rn = rand(4); // 0 = left, 1 = right, 2 = up, 3 = down
@@ -235,6 +409,10 @@ class Game {
             }
 
         }
+
+        if (this.#gameType === 'change_agent_perturbed') { // Move mock self as well, if it exists
+            this.#mockSelf.move(this.getBoard());
+        }
     }
 
     /*
@@ -256,7 +434,7 @@ class Game {
             }
 
             this.move_ns_contingency(); // move non-self sprites
-        } else if (this.getGameType() === "change_agent") {
+        } else if (this.getGameType() === "change_agent" || this.getGameType() === "change_agent_perturbed") {
             if (this.#action_count[this.#level_count] === 0) { // if it is the first action, set non self sprites
                 this.contingency_ns_pos(); // set position of non-self sprites
             }
@@ -308,12 +486,12 @@ class Game {
             this.#current_self_locs.push(deepCopy(this.#avatarPosition));
             this.#current_ns_locs.push(deepCopy(this.#ns_positions));
 
-        } else if (this.canMove(direction) === 2) {
+        } else if (this.canMove(direction) === 2) { // Goal!
             this.nextLevel();
         } else { // cannot move
-            if (this.canMove(direction) === 0) { // wall
+            if (this.canMove(direction) === 0) { // Wall
                 this.#wall_interactions[this.#level_count]++;
-            } else if (this.canMove(direction) === -1) { // ns
+            } else if (this.canMove(direction) === -1) { // Non-Self
                 this.#ns_interactions[this.#level_count]++;
             }
 
@@ -323,8 +501,6 @@ class Game {
         }
 
         //this.#current_self_locs.push(JSON.stringify(this.#avatarPosition));
-
-
     }
 
     // returns 0 if the avatar cannot move to the specified location, 1 if avatar can move and 2 if avatar reaches goal
@@ -455,13 +631,18 @@ class Game {
 }
 
 // Returns random avatar position.
-// (1,1), (7,1), (1,7), (7,7)
-function random_avatar_pos(gameType) {
+// If mockSelf is true, return the position of the mock self instead
+function random_avatar_pos(gameType, mockSelf = false) {
     if (gameType === "logic") {
         let positions = [[1, 1], [1, 7], [7, 1], [7, 7]];
         return positions[rand(4)];
-    } else if ((gameType === "contingency") || (gameType === "change_agent") || (gameType === "shuffle_keys")) {
+    } else if ((gameType === "contingency") || (gameType === "change_agent") ||
+        (gameType === "shuffle_keys") || (gameType === "change_agent_perturbed")) {
         let positions = [[6, 6], [6, 14], [14, 6], [14, 14]];
+        if (mockSelf) {
+            return [14, 10];
+        }
+
         return positions[rand(4)];
     }
 }

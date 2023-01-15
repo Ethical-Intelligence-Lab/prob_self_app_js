@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['prob-self-mturk.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'prob-self-mturk.herokuapp.com', 'ethicalintelligencelab.xyz', '137.184.79.6']
 
 # Application definition
 

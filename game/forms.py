@@ -48,7 +48,7 @@ class DemographicsForm(forms.Form):
                 }
 
 class EnterWorkerIdForm(forms.Form):
-    worker_id = forms.CharField(label='Your Random ID', required=True)
+    worker_id = forms.CharField(label='Your MTURK ID', required=True)
 
     def get_fields(self):
         return {'worker_id': self.worker_id}

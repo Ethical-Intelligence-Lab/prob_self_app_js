@@ -209,6 +209,14 @@ class Game {
         }
     }
 
+    isNextToGoal() {
+        let dist_vertical = 10 - this.getAvatarPos()[0];
+        let dist_horiz = 10 - this.getAvatarPos()[1];
+
+        return ((dist_horiz === 0 && (dist_vertical === -1 || dist_vertical === 1)) || (
+            dist_vertical === 0 && (dist_horiz === 1 || dist_horiz === -1)));
+    }
+
     addToMaps(oldMap) {
         this.#maps.push(JSON.parse(JSON.stringify(oldMap)));
     }

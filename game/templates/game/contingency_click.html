@@ -20,12 +20,14 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Instructions</h5>
-                <h6 style="color: crimson">- <b>Important:</b> In each level, as soon as you find which square you are
+                <h6><b id="bigger">- Important:</b> In each level, <b id="bigger">as soon as</b> you find which
+                    square you are
                     controlling, please click on that square. You can only click one time per level.</h6>
                 <h6 class="card-subtitle mb-2 text-muted">- Please use the arrow keys to play the game.</h6>
                 <h6 class="card-subtitle mb-2 text-muted">- Your progress will be lost if you
                     quit/refresh without finishing the game.</h6>
-                <h5 id="step_count" style="font-weight: bold" class="card-subtitle mb-2 text">Current Action Count: 0</h5>
+                <h5 id="step_count" style="font-weight: bold" class="card-subtitle mb-2 text">Current Action Count:
+                    0</h5>
                 <h5 id="level_count" style="font-weight: bold" class="card-subtitle mb-2 text">LEVEL: 0</h5>
             </div>
         </div>
@@ -230,6 +232,10 @@
             if (clicked) { // Cannot click more than once in a level
                 alert("Alert: Please select an agent only once in a level.")
             } else { // Append
+                if (game.isNextToGoal()) {
+                    alert("Alert: Remember, on each level you should click on the square you are controlling AS SOON AS find it, NOT at the end")
+                }
+                
                 clicked = true;
                 selectedAgents.push({
                     'level': game.getLevelCount(), 'step': game.getCurrentActionCount(),
@@ -242,7 +248,6 @@
                     $el.css("background", "red");
                 }, 500);
             }
-
         }
 
         // Check if clicked element is an avatar. If not, give error message
@@ -254,6 +259,12 @@
 
 
 <style>
+    #bigger {
+        color: crimson;
+        font-size: 20px !important;
+        font-weight: bolder;
+    }
+
     .center {
         margin: auto;
         width: 50%;

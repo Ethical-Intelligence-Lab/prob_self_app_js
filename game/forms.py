@@ -52,9 +52,3 @@ class EnterWorkerIdForm(forms.Form):
 
     def get_fields(self):
         return {'worker_id': self.worker_id}
-
-class EnterCompletionCodeForm(forms.Form):
-    completion_code = forms.CharField(label='Your Completion Code', required=True)
-
-    def get_fields(self):
-        return {'completion_code': self.completion_code}

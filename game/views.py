@@ -12,6 +12,7 @@ from django.shortcuts import render, redirect
 from .models import Participant, Demographics
 from .forms import DemographicsForm, EnterWorkerIdForm, EnterCompletionCodeForm
 from datetime import datetime
+import exrex
 
 
 def home(request):
@@ -88,63 +89,25 @@ def pre_game(request):
             return HttpResponse("No worker id")
         return redirect("logic")
 
-
-"""
-# Demographics
-def demographics(request):
-    worker_id = request.session.get('worker_id')
-    context = {}
-    if request.method == "GET":
-        context['form'] = DemographicsForm(
-            initial={'worker_id': worker_id})
-
-        print("Post game (GET): ------ ---  ", context)
-        return render(request, "game/demographics.html", context)
-    else:
-        context = request.POST.dict()
-        print("Post game (POST): ------ ---  ", context)
-
-        # Save demographics
-        new_demographics = Demographics(participant=Participant.objects.get(worker_id=context['worker_id']),
-                                        ethnicity=context['ethnicity'],
-                                        gender=context['gender'],
-                                        age=context['age'],
-                                        game_exp=context['game_exp'],
-                                        edu=context['edu'])
-        new_demographics.save()
-
-        participant = Participant.objects.get(worker_id=worker_id)
-        participant.submitted_demographics = True
-        participant.save()
-
-        print("Demographics saved {}".format(worker_id))
-
-        return redirect("completion")
-
-"""
-
-
-def completion(request):
-    worker_id = request.session.get('worker_id')
-    context = {}
-    if request.method == "GET":
-        context['form'] = EnterCompletionCodeForm()
-        print("Post game (GET): ------ ---  ", context)
-        return render(request, "game/completion.html", context)
-    else:
-        completion_code = request.POST.get('completion_code')
-        p = Participant.objects.get(worker_id=worker_id)
-        p.completion_code = completion_code
-        request.session['completion_code'] = completion_code
-        p.save()
-        return redirect("success")
-
-
 def success(request):
     worker_id = request.session.get('worker_id')
-    completion_code = request.session.get('completion_code')
 
-    return render(request, "game/success.html", {'worker_id': worker_id, 'completion_code': completion_code})
+    if worker_id is None:
+        return HttpResponse("Worker ID does not exist")
+
+    if not Participant.objects.filter(worker_id=worker_id).exists():
+        return HttpResponse("Participant does not exist")
+
+    p = Participant.objects.get(worker_id=worker_id)
+
+    if p.completion_code is None:
+        rand_id = exrex.getone('\d{4}-\d{4}-\d{4}-[0-9]{4}')
+        p.completion_code = rand_id
+        p.save()
+    else:
+        rand_id = p.completion_code
+
+    return render(request, "game/success.html", {'worker_id': worker_id, 'completion_code': rand_id})
 
 
 def cannot_attend(request):
@@ -271,6 +234,9 @@ def game_finished(request):
     data = request.POST.get('data', None)
     worker_id = request.POST.get('worker_id', None)
     game_type = request.POST.get("gameType")
+
+    # Save completion code:
+
 
     print("in game finished: ", request.POST)
     print("Game finished, submitting to s3. ID: ", worker_id, " - Game type: ", game_type)

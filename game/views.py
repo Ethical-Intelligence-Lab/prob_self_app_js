@@ -10,7 +10,7 @@ from botocore.exceptions import ClientError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import Participant, Demographics
-from .forms import DemographicsForm, EnterWorkerIdForm, EnterCompletionCodeForm
+from .forms import DemographicsForm, EnterWorkerIdForm
 from datetime import datetime
 import exrex
 

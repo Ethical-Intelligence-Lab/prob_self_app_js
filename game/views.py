@@ -261,7 +261,7 @@ def game_finished(request):
     save_into_db(context)
 
     # Go to completion
-    return redirect('/completion/', permanent=True)
+    return redirect('/success/', permanent=True)
 
 
 def save_into_db(context):

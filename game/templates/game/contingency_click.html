@@ -117,7 +117,7 @@
 
                     clicked = false;
                 }
-                document.getElementById("level_count").textContent = "CURRENT LEVEL: " + game.getLevelCount() + ", REMAINING: " + 100 - game.getLevelCount();
+                document.getElementById("level_count").textContent = "CURRENT LEVEL: " + game.getLevelCount().toString() + ", REMAINING: " + (100 - game.getLevelCount()).toString();
                 paintBoard();
                 if (game.getLevelCount() === game.getNumLevels()) { // Finished game, save data
                     document.removeEventListener("keydown", keyHandler, false);

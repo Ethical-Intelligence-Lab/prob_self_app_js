@@ -23,12 +23,14 @@
                 <h6><b id="bigger">- Important:</b> In each level, <b id="bigger">as soon as</b> you find which
                     square you are
                     controlling, please click on that square. You can only click one time per level.</h6>
-                <h6 class="card-subtitle mb-2 text-muted">- Please use the arrow keys to play the game.</h6>
+                <h6 class="card-subtitle mb-2 text-muted">- Additionally, please use the arrow keys to play the
+                    game.</h6>
                 <h6 class="card-subtitle mb-2 text-muted">- Your progress will be lost if you
                     quit/refresh without finishing the game.</h6>
                 <h5 id="step_count" style="font-weight: bold" class="card-subtitle mb-2 text">Current Action Count:
                     0</h5>
-                <h5 id="level_count" style="font-weight: bold" class="card-subtitle mb-2 text">LEVEL: 0</h5>
+                <h5 id="level_count" style="font-weight: bold" class="card-subtitle mb-2 text">CURRENT LEVEL: 0,
+                    REMAINING: 100</h5>
             </div>
         </div>
         <div id="outer">
@@ -115,7 +117,7 @@
 
                     clicked = false;
                 }
-                document.getElementById("level_count").textContent = "LEVEL: " + game.getLevelCount();
+                document.getElementById("level_count").textContent = "CURRENT LEVEL: " + game.getLevelCount() + ", REMAINING: " + 100 - game.getLevelCount();
                 paintBoard();
                 if (game.getLevelCount() === game.getNumLevels()) { // Finished game, save data
                     document.removeEventListener("keydown", keyHandler, false);

@@ -62,16 +62,16 @@ def finished_survey(request, worker_id):
 
 # redirect to user to a game that is less played
 def redirect_to_less(request):
-    #print("in redirect to less, ", request.session.get("worker_id"))
-    #game_list = ["logic", "contingency", "change_agent"]
-    #counts = []
-    #for game in game_list:
+    # print("in redirect to less, ", request.session.get("worker_id"))
+    # game_list = ["logic", "contingency", "change_agent"]
+    # counts = []
+    # for game in game_list:
     #    counts.append(Participant.objects.filter(game_type=game).count())
 
     # index = min(enumerate(counts), key=itemgetter(1))[0]
     # return globals()[game_list[index]](request, render_data)
 
-    return redirect('contingency_click')
+    return redirect('shuffle_keys_click')
 
 
 # Show the consent form
@@ -88,6 +88,7 @@ def pre_game(request):
         if worker_id is None:
             return HttpResponse("No worker id")
         return redirect("logic")
+
 
 def success(request):
     worker_id = request.session.get('worker_id')
@@ -151,6 +152,25 @@ def contingency(request):
     print("in contingency game: ", context)
     return render(request, "game/contingency_game.html", context)
 
+
+def contingency_perturbed(request):
+    worker_id = request.session.get('worker_id')
+    if worker_id is None:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    # Participant does not exist
+    if not Participant.objects.filter(worker_id=worker_id).exists():
+        return redirect('cannot_attend')
+
+    p = Participant.objects.get(worker_id=worker_id)
+    if p.finished_game:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    context = {'worker_id': worker_id}
+    print("in contingency perturbed game: ", context)
+    return render(request, "game/contingency_perturbed_game.html", context)
+
+
 def contingency_click(request):
     worker_id = request.session.get('worker_id')
     if worker_id is None:
@@ -167,6 +187,24 @@ def contingency_click(request):
     context = {'worker_id': worker_id}
     print("in contingency game: ", context)
     return render(request, "game/contingency_click.html", context)
+
+
+def shuffle_keys_click(request):
+    worker_id = request.session.get('worker_id')
+    if worker_id is None:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    # Participant does not exist
+    if not Participant.objects.filter(worker_id=worker_id).exists():
+        return redirect('cannot_attend')
+
+    p = Participant.objects.get(worker_id=worker_id)
+    if p.finished_game:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    context = {'worker_id': worker_id}
+    print("in shuffle_keys_click game: ", context)
+    return render(request, "game/shuffle_keys_click.html", context)
 
 
 def change_agent(request):
@@ -234,9 +272,6 @@ def game_finished(request):
     data = request.POST.get('data', None)
     worker_id = request.POST.get('worker_id', None)
     game_type = request.POST.get("gameType")
-
-    # Save completion code:
-
 
     print("in game finished: ", request.POST)
     print("Game finished, submitting to s3. ID: ", worker_id, " - Game type: ", game_type)

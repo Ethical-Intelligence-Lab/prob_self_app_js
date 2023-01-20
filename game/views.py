@@ -71,7 +71,7 @@ def redirect_to_less(request):
     # index = min(enumerate(counts), key=itemgetter(1))[0]
     # return globals()[game_list[index]](request, render_data)
 
-    return redirect('shuffle_keys_click')
+    return redirect('contingency_perturbed')
 
 
 # Show the consent form

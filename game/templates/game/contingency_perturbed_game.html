@@ -16,22 +16,17 @@
 <body>
 
 <div class="center">
-
-    <div class="alert alert-primary" role="alert">
-        <div class="card-body">
-            <h5 class="card-title">Instructions</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Your progress will be lost if you
-                quit without finishing the game. Please use the arrow keys to play the game. You can start!</h6>
-        </div>
-    </div>
-
-
-
     <div id="wrap">
         <div class="card">
             <div class="card-body">
-                <h6 id="step_count" class="card-subtitle mb-2 text-muted">Current Action Count: 0</h6>
-                <h6 id="level_count" class="card-subtitle mb-2 text-muted">Level: 0</h6>
+                <h6 class="card-subtitle mb-2 text-muted">- Please use the arrow keys to play the
+                    game.</h6>
+                <h6 class="card-subtitle mb-2 text-muted">- Your progress will be lost if you
+                    quit/refresh without finishing the game.</h6>
+                <h5 id="step_count" style="font-weight: bold" class="card-subtitle mb-2 text">Current Action Count:
+                    0</h5>
+                <h5 id="level_count" style="font-weight: bold" class="card-subtitle mb-2 text">CURRENT LEVEL: 0,
+                    REMAINING: 150</h5>
             </div>
         </div>
         <div id="outer">
@@ -59,36 +54,15 @@
 
     // Construct the game
     let game = new Game("contingency_perturbed");
-    const dimensions = [game.getBoard().length, game.getBoard()[0].length];
-
-    var markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ?
-        "avatar" : col === 3 ?
-            "goal" : col === 0 ?
-                "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
-
-    for(let i = 0; i < dimensions[0]; i++) {
-        for(let i = 0; i < dimensions[1]; i++) {
-
-        }
-    }
-
+    var markup = game.getBoard().map((row, rindex) => row.map((col, cindex) => `<span id="${rindex}x${cindex}" class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
     document.getElementById("container").innerHTML = markup;
 
     function paintBoard() {
-        markup = game.getBoard().map(row => row.map(col => `<span class="field ${col === 8 ?
-            "avatar" : col === 3 ?
-                "goal" : col === 0 ?
-                    "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
+        markup = game.getBoard().map((row, rindex) => row.map((col, cindex) => `<span id="${rindex}x${cindex}" class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
         document.getElementById("container").innerHTML = markup;
     }
 
-    $(document).click(function(event) {
-        var text = $(event.target).text();
-    });
-
     $(document).ready(function () {
-        $('div.alert-primary').fadeIn(500).delay(7000).fadeOut(700);
-
         document.addEventListener("keydown", keyHandler, false);
 
         function keyHandler(event) {
@@ -127,11 +101,14 @@
 
                 game.move(tmp);
                 document.getElementById("step_count").textContent = "Current Action Count: " + game.getCurrentActionCount();
-                document.getElementById("level_count").textContent = "Level: " + game.getLevelCount();
+                document.getElementById("level_count").textContent = "CURRENT LEVEL: " + game.getLevelCount().toString() + ", REMAINING: " + (150 - game.getLevelCount()).toString();
                 paintBoard();
-                if (game.getLevelCount() === game.getNumLevels()) {
+                if (game.getLevelCount() === game.getNumLevels()) { // Finished game, save data
                     document.removeEventListener("keydown", keyHandler, false);
-                    document.getElementById("data").value = JSON.stringify(game.getData());
+
+                    let game_data = game.getData();
+                    game_data['selectedAgents'] = selectedAgents;
+                    document.getElementById("data").value = JSON.stringify(game_data);
                     document.getElementById("finish").submit();
                 }
             }
@@ -193,7 +170,7 @@
         document.getElementById("step_count").textContent = "Current Action Count: " + game.getCurrentActionCount();
         document.getElementById("level_count").textContent = "Level: " + game.getLevelCount();
         paintBoard();
-        if (game.getLevelCount() === game.getNumLevels()) {
+        if (game.getLevelCount() === game.getNumLevels()) { // Finished game, save data
             document.removeEventListener('touchstart', handleTouchStart, false);
             document.removeEventListener('touchmove', handleTouchMove, false);
             document.getElementById("data").value = JSON.stringify(game.getData());
@@ -222,14 +199,14 @@
         scale = Math.min(width / maxWidth, height / maxHeight);
         console.log("Scale: " + scale)
 
-        if(scale <= 1) {
+        if (scale <= 1) {
             outer.style.transform = 'scale(' + scale + ')';
             wrapper.style.width = isMax ? '' : maxWidth * scale;
             wrapper.style.height = isMax ? '' : maxHeight * scale;
         }
 
 
-        if( maxWidth <= 1000 || maxHeight <= 1000 ) {
+        if (maxWidth <= 1000 || maxHeight <= 1000) {
             scale = Math.min(maxWidth, maxHeight)
         }
     }
@@ -238,15 +215,21 @@
 
 
 <style>
+    #bigger {
+        color: crimson;
+        font-size: 20px !important;
+        font-weight: bolder;
+    }
+
     .center {
         margin: auto;
         width: 50%;
-        padding: 10px;
+        padding: 0;
     }
 
     #container {
         margin: auto;
-        padding: 20px;
+        padding: 5px;
         height: 100%;
         overflow: hidden;
         width: 100%;
@@ -255,8 +238,8 @@
 
     .field {
         float: left;
-        height: 4%;
-        width: 4%;
+        height: 4.5%;
+        width: 4.5%;
     }
 
     .clear {
@@ -286,12 +269,6 @@
         margin: 10px 0;
     }
 
-    #topleft {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-    }
-
 
     #wrap {
         position: relative;
@@ -318,7 +295,13 @@
     .card {
         outline: None;
         border-style: none !important;
-        width: 50%;
+        width: 81%;
+        padding-top: 1em;
+    }
+
+    .card-body {
+        padding: 0;
+        margin: 0.5rem;
     }
 
     svg {

@@ -59,7 +59,6 @@ class MockSelf {  // Used in the perturbation game
 
     // Moving the mock self towards the reward or if not in navigation mode, moves randomly.
     move(board) {
-        console.log("Move")
         if (this.#gameType === 'contingency_perturbed') {
             let move_choices = (this.#oscillation_dir === 0) ? [0, 1] : [2, 3];
             this.random_move(move_choices, board)
@@ -212,10 +211,11 @@ class Game {
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[0]));
 
             if (gameType === "change_agent_perturbed" || gameType === "contingency_perturbed") {  // Construct the mock self
-                this.#mockSelf = new MockSelf(gameType, random_avatar_pos(gameType, true));
+                this.#num_levels = 150;
+                //this.#mockSelf = new MockSelf(gameType, random_avatar_pos(gameType, true));
 
                 // Set mock self's position on the board
-                this.#board[this.#mockSelf.get_location()[0]][this.#mockSelf.get_location()[1]] = 8;
+                //this.#board[this.#mockSelf.get_location()[0]][this.#mockSelf.get_location()[1]] = 8;
             }
         }
     }
@@ -304,10 +304,13 @@ class Game {
             }
 
             if (this.#gameType === "change_agent_perturbed" || this.#gameType === "contingency_perturbed") {
-                this.#mockSelf = new MockSelf(this.#gameType, random_avatar_pos(this.#gameType, true));
+                // Add the mock self after 100 levels
+                if (this.getLevelCount() >= 100) {
+                    this.#mockSelf = new MockSelf(this.#gameType, random_avatar_pos(this.#gameType, true));
 
-                // Set mock self's position on the board
-                this.#board[this.#mockSelf.get_location()[0]][this.#mockSelf.get_location()[1]] = 8;
+                    // Set mock self's position on the board
+                    this.#board[this.#mockSelf.get_location()[0]][this.#mockSelf.get_location()[1]] = 8;
+                }
             }
         }
 
@@ -391,6 +394,12 @@ class Game {
 
             }
         }
+
+        if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
+            if (this.getLevelCount() >= 100) {
+                this.#mockSelf.move(this.getBoard());
+            }
+        }
     }
 
 
@@ -442,7 +451,9 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            this.#mockSelf.move(this.getBoard());
+            if (this.getLevelCount() >= 100) {
+                this.#mockSelf.move(this.getBoard());
+            }
         }
     }
 
@@ -477,7 +488,6 @@ class Game {
     */
     move(direction) {
         if ((this.#gameType !== 'logic') && (this.#action_count[this.#level_count] === 0)) {
-            console.log("Setting initial ns pos")
             this.contingency_ns_pos(); // set initial position of non-self sprites
         }
 
@@ -508,7 +518,6 @@ class Game {
         }
 
         // *-*-*-*-*-* Move the avatar *-*-*-*-*-* //
-        console.log(this.canMove(direction));
         if (this.canMove(direction) === 1) { // Can move
             let x = this.getAvatarPos()[0]
             let y = this.getAvatarPos()[1]
@@ -527,7 +536,6 @@ class Game {
         } else if (this.canMove(direction) === 2) { // Goal!
             this.nextLevel();
         } else { // cannot move
-            console.log("Cannot move");
             if (this.canMove(direction) === 0) { // Wall
                 this.#wall_interactions[this.#level_count]++;
             } else if (this.canMove(direction) === -1) { // Non-Self

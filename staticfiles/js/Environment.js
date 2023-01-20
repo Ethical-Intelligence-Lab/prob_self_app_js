@@ -333,7 +333,7 @@ class Game {
 
             if (this.#gameType === "change_agent_perturbed" || this.#gameType === "contingency_perturbed") {
                 // Add the mock self after 100 levels
-                if (this.getLevelCount() >= 1) {
+                if (this.getLevelCount() >= 100) {
                     this.#mockSelf = new MockSelf(this.#gameType, random_avatar_pos(this.#gameType, true));
 
                     // Set mock self's position on the board
@@ -424,7 +424,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() >= 1) {
+            if (this.getLevelCount() >= 100) {
                 this.#mockSelf.move(this.getBoard());
             }
         }
@@ -479,7 +479,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() >= 1) {
+            if (this.getLevelCount() >= 100) {
                 this.#mockSelf.move(this.getBoard());
             }
         }

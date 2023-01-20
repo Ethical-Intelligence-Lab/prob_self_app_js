@@ -107,7 +107,6 @@
                     document.removeEventListener("keydown", keyHandler, false);
 
                     let game_data = game.getData();
-                    game_data['selectedAgents'] = selectedAgents;
                     document.getElementById("data").value = JSON.stringify(game_data);
                     document.getElementById("finish").submit();
                 }

@@ -3,15 +3,17 @@ class MockSelf {  // Used in the perturbation game
     #location;
     #action_pos_dict = [[-1, 0], [1, 0], [0, -1], [0, 1]];
     #gameType;
+    #startLoc;
     #oscillation_dir; // For perturbed contingency game
 
     constructor(gameType, location) {
         this.#navigating = true;
         this.#location = location;
+        this.#startLoc = location;
         this.#gameType = gameType;
 
         if (this.#gameType === 'contingency_perturbed') {
-            this.#oscillation_dir = rand(1) // 0 = Horizontal, 1 = Vertical
+            this.#oscillation_dir = rand(2) // 0 = Horizontal, 1 = Vertical
         }
     }
 
@@ -31,18 +33,26 @@ class MockSelf {  // Used in the perturbation game
         console.log('Randomly moving');
         var rn;
         var stay;
-        let cc = new Array(move_choices.length).fill(0);
+
+        let cc = {}
+
+        function add_choice(value, index, array) {
+            cc[value] = 0;
+        }
+
+        move_choices.forEach(add_choice);
+
         do {
+            if (Object.values(cc).every(item => item !== 0)) { // stay, cannot move anywhere
+                stay = true;
+                break;
+            }
+
             // Pick a random direction to move
             rn = move_choices[Math.floor(Math.random() * move_choices.length)];
 
             if (cc[rn] === 0) {
                 cc[rn]++;
-            }
-
-            if (cc.every(item => item !== 0)) { // stay, cannot move anywhere
-                stay = true;
-                break;
             }
 
         } while (!this.canMove(rn, board)); // iterate if ns cannot move TODO: canMoveNs???
@@ -60,7 +70,25 @@ class MockSelf {  // Used in the perturbation game
     // Moving the mock self towards the reward or if not in navigation mode, moves randomly.
     move(board) {
         if (this.#gameType === 'contingency_perturbed') {
+
             let move_choices = (this.#oscillation_dir === 0) ? [0, 1] : [2, 3];
+            console.log("Current location: ", this.get_location(), "Oscil Dir: ", this.#oscillation_dir);
+
+            // Check if the mock self is in border:
+            if (this.#oscillation_dir === 0) {
+                if ((this.#startLoc[0] - this.get_location()[0]) === -3) {
+                    move_choices = [0];
+                } else if ((this.#startLoc[0] - this.get_location()[0]) === 3) {
+                    move_choices = [1];
+                }
+            } else {
+                if ((this.#startLoc[1] - this.get_location()[1]) === 3) {
+                    move_choices = [3];
+                } else if ((this.#startLoc[1] - this.get_location()[1]) === -3) {
+                    move_choices = [2];
+                }
+            }
+
             this.random_move(move_choices, board)
 
             return;
@@ -305,7 +333,7 @@ class Game {
 
             if (this.#gameType === "change_agent_perturbed" || this.#gameType === "contingency_perturbed") {
                 // Add the mock self after 100 levels
-                if (this.getLevelCount() >= 100) {
+                if (this.getLevelCount() >= 1) {
                     this.#mockSelf = new MockSelf(this.#gameType, random_avatar_pos(this.#gameType, true));
 
                     // Set mock self's position on the board
@@ -396,7 +424,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() >= 100) {
+            if (this.getLevelCount() >= 1) {
                 this.#mockSelf.move(this.getBoard());
             }
         }
@@ -451,31 +479,10 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() >= 100) {
+            if (this.getLevelCount() >= 1) {
                 this.#mockSelf.move(this.getBoard());
             }
         }
-    }
-
-    get_new_xy(x, y, direction) {
-        let new_x = x;
-        let new_y = y;
-        switch (direction) {
-            case 0:
-                new_x--;
-                break;
-            case 1:
-                new_x++;
-                break;
-            case 2:
-                new_y--;
-                break;
-            case 3:
-                new_y++;
-                break;
-        }
-
-        return ([new_x, new_y]);
     }
 
     /*
@@ -522,7 +529,7 @@ class Game {
             let x = this.getAvatarPos()[0]
             let y = this.getAvatarPos()[1]
 
-            let new_xy = this.get_new_xy(x, y, direction)
+            let new_xy = get_new_xy(x, y, direction)
             let new_x = new_xy[0];
             let new_y = new_xy[1];
 
@@ -849,6 +856,27 @@ function contingency_levels(levels) {
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]);
+}
+
+function get_new_xy(x, y, direction) {
+    let new_x = x;
+    let new_y = y;
+    switch (direction) {
+        case 0:
+            new_x--;
+            break;
+        case 1:
+            new_x++;
+            break;
+        case 2:
+            new_y--;
+            break;
+        case 3:
+            new_y++;
+            break;
+    }
+
+    return ([new_x, new_y]);
 }
 
 const deepCopy = (arr) => {

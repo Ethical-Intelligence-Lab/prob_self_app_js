@@ -229,10 +229,14 @@ class Game {
         this.#wall_interactions.push(0);
         this.shuffle_key_mappings();
 
-        if (gameType === "logic") {
+        if (gameType === "logic" || gameType === "logic_perturbed") {
             let rn = rand(9);
             logic_levels(this.#possible_levels);
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[rn]));
+
+            if(gameType === "logic_perturbed") {
+                this.#num_levels = 150;
+            }
         } else if (gameType === "contingency" || gameType === "contingency_perturbed" || gameType === "change_agent" || gameType === "shuffle_keys" ||
             gameType === "change_agent_perturbed") {
             contingency_levels(this.#possible_levels);
@@ -314,7 +318,11 @@ class Game {
 
     nextLevel() {
         this.addToMaps(this.#board);
-        if (this.#gameType === 'logic') {
+        if (this.#gameType === 'logic' || this.#gameType === 'logic_perturbed') {
+            if (this.#gameType === 'logic_perturbed' && this.getLevelCount() > 100) {
+                this.#possible_levels = [];
+                logic_levels(this.#possible_levels, true);
+            }
             let rn = rand(9);
             this.setBoard(JSON.parse(JSON.stringify(this.getLevel(rn))));
             this.setAvatarPos(random_avatar_pos(this.#gameType));
@@ -333,7 +341,7 @@ class Game {
 
             if (this.#gameType === "change_agent_perturbed" || this.#gameType === "contingency_perturbed") {
                 // Add the mock self after 100 levels
-                if (this.getLevelCount() >= 100) {
+                if (this.getLevelCount() > 100) {
                     this.#mockSelf = new MockSelf(this.#gameType, random_avatar_pos(this.#gameType, true));
 
                     // Set mock self's position on the board
@@ -424,7 +432,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() >= 100) {
+            if (this.getLevelCount() > 100) {
                 this.#mockSelf.move(this.getBoard());
             }
         }
@@ -479,7 +487,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() >= 100) {
+            if (this.getLevelCount() > 100) {
                 this.#mockSelf.move(this.getBoard());
             }
         }
@@ -686,7 +694,7 @@ class Game {
 // Returns random avatar position.
 // If mockSelf is true, return the position of the mock self instead
 function random_avatar_pos(gameType, mockSelf = false) {
-    if (gameType === "logic") {
+    if (gameType === "logic" || gameType === "logic_perturbed") {
         let positions = [[1, 1], [1, 7], [7, 1], [7, 7]];
         return positions[rand(4)];
     } else if ((gameType === "contingency") || (gameType === "contingency_perturbed") || (gameType === "change_agent") ||
@@ -722,8 +730,8 @@ function rand(level_amt) {
     return Math.floor(Math.random() * level_amt);
 }
 
-function logic_levels(levels) {
-    levels.push([
+function logic_levels(levels, perturbed = false) {
+    var level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 0, 0, 0, 0, 0, 8, 1],
         [1, 1, 0, 0, 0, 0, 0, 1, 1],
@@ -732,10 +740,16 @@ function logic_levels(levels) {
         [1, 1, 0, 0, 0, 0, 0, 1, 1],
         [1, 1, 0, 0, 0, 0, 0, 1, 1],
         [1, 8, 0, 0, 0, 0, 0, 8, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+        [1, 1, 1, 1, 1, 1, 1, 1, 1]];
+    if (perturbed) {
+        level[1][4] = 8;
+    }
 
-    levels.push([
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 1, 1, 0, 0, 0, 8, 1],
         [1, 0, 0, 0, 0, 0, 0, 1, 1],
@@ -745,9 +759,17 @@ function logic_levels(levels) {
         [1, 1, 0, 0, 0, 0, 0, 1, 1],
         [1, 8, 0, 0, 0, 0, 0, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
 
-    levels.push([
+    if (perturbed) {
+        level[7][4] = 8;
+    }
+
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 0, 0, 0, 0, 0, 8, 1],
         [1, 1, 0, 0, 0, 0, 0, 1, 1],
@@ -757,9 +779,17 @@ function logic_levels(levels) {
         [1, 0, 0, 0, 0, 0, 0, 1, 1],
         [1, 8, 1, 1, 0, 0, 0, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
 
-    levels.push([
+    if (perturbed) {
+        level[1][4] = 8;
+    }
+
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 0, 0, 0, 0, 0, 8, 1],
         [1, 1, 0, 0, 0, 0, 0, 1, 1],
@@ -769,9 +799,16 @@ function logic_levels(levels) {
         [1, 1, 0, 0, 0, 0, 0, 0, 1],
         [1, 8, 0, 0, 0, 1, 1, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
 
-    levels.push([
+    if (perturbed) {
+        level[1][4] = 8;
+    }
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 0, 0, 0, 1, 1, 8, 1],
         [1, 1, 0, 0, 0, 0, 0, 0, 1],
@@ -781,9 +818,17 @@ function logic_levels(levels) {
         [1, 1, 0, 0, 0, 0, 0, 1, 1],
         [1, 8, 0, 0, 0, 0, 0, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
 
-    levels.push([
+    if (perturbed) {
+        level[7][4] = 8;
+    }
+
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 1, 1, 0, 1, 1, 8, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -793,9 +838,17 @@ function logic_levels(levels) {
         [1, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 8, 1, 1, 0, 1, 1, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
 
-    levels.push([
+    if (perturbed) {
+        level[4][1] = 8;
+    }
+
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 1, 1, 0, 1, 1, 8, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -805,9 +858,17 @@ function logic_levels(levels) {
         [1, 1, 0, 0, 0, 0, 0, 0, 1],
         [1, 8, 0, 0, 0, 1, 1, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
 
-    levels.push([
+    if (perturbed) {
+        level[4][7] = 8;
+    }
+
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 1, 1, 0, 1, 1, 8, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -817,9 +878,16 @@ function logic_levels(levels) {
         [1, 0, 0, 0, 0, 0, 0, 1, 1],
         [1, 8, 1, 1, 0, 0, 0, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
 
-    levels.push([
+    if (perturbed) {
+        level[4][7] = 8;
+    }
+    levels.push(deepCopy(level));
+
+    // ---------------------------------
+
+    level = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 8, 1, 1, 0, 0, 0, 8, 1],
         [1, 0, 0, 0, 0, 0, 0, 1, 1],
@@ -829,7 +897,13 @@ function logic_levels(levels) {
         [1, 0, 0, 0, 0, 0, 0, 1, 1],
         [1, 8, 1, 1, 0, 0, 0, 8, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]);
+    ];
+
+    if (perturbed) {
+        level[4][1] = 8;
+    }
+
+    levels.push(deepCopy(level));
 }
 
 function contingency_levels(levels) {

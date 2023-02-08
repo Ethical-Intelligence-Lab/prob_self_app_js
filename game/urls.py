@@ -31,6 +31,7 @@ urlpatterns = [
     path('logic/', views.logic, name='logic'),
     path('contingency/', views.contingency, name='contingency'),
     path('game_page_cp/', views.contingency_perturbed, name='contingency_perturbed'),
+    path('game_page_cap/', views.change_agent_perturbed, name='change_agent_perturbed'),
     path('game_page_lp/', views.logic_perturbed, name='logic_perturbed'),
     path('contingency_click/', views.contingency_click, name='contingency_click'),
     path('game_page_skc/', views.shuffle_keys_click, name='shuffle_keys_click'),

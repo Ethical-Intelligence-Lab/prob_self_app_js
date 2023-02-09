@@ -319,7 +319,7 @@ class Game {
     nextLevel() {
         this.addToMaps(this.#board);
         if (this.#gameType === 'logic' || this.#gameType === 'logic_perturbed') {
-            if (this.#gameType === 'logic_perturbed' && this.getLevelCount() > 98) {
+            if (this.#gameType === 'logic_perturbed' && this.getLevelCount() > 18) {
                 this.#possible_levels = [];
                 logic_levels(this.#possible_levels, true);
             }
@@ -432,7 +432,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() > 98) {
+            if (this.getLevelCount() > 18) {
                 this.#mockSelf.move(this.getBoard());
             }
         }
@@ -487,7 +487,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() > 98) {
+            if (this.getLevelCount() > 18) {
                 this.#mockSelf.move(this.getBoard());
             }
         }

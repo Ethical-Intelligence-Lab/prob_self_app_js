@@ -309,11 +309,9 @@ def game_finished(request):
     worker_id = request.POST.get('worker_id', None)
     game_type = request.POST.get("gameType")
 
-    print("in game finished: ", request.POST)
-    print("Game finished, submitting to s3. ID: ", worker_id, " - Game type: ", game_type)
+    print("Game finished: ", worker_id, " - Game type: ", game_type)
 
     dt = datetime.today().strftime('%Y-%m-%d=%H:%M:%S')
-
     final_data = json.loads(data)
 
     final_data["data"]["self_locs"] = take_transpose(final_data["data"]["self_locs"])

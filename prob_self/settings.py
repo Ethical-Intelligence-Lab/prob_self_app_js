@@ -32,6 +32,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['eilexp.xyz']
 
 # Application definition
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
 INSTALLED_APPS = [
     'django.contrib.admin',

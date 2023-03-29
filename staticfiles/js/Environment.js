@@ -34,7 +34,6 @@ class MockSelf {  // Used in the perturbation game
     }
 
     random_move(move_choices, board) {
-        console.log('Randomly moving');
         var rn;
         var stay;
 
@@ -73,7 +72,7 @@ class MockSelf {  // Used in the perturbation game
 
     // Moving the mock self towards the reward or if not in navigation mode, moves randomly.
     move(board) {
-        console.log("Current location: ", this.get_location(), "Oscil Dir: ", this.#oscillation_dir);
+        //console.log("Current location: ", this.get_location(), "Oscil Dir: ", this.#oscillation_dir);
         if (this.#gameType === 'contingency_perturbed') {
 
             let move_choices = (this.#oscillation_dir === 0) ? [0, 1] : [2, 3];
@@ -104,7 +103,7 @@ class MockSelf {  // Used in the perturbation game
         let vertical_or_horizontal = rand(2);
         if ((dist_horiz === 0 && (dist_vertical === -1 || dist_vertical === 1)) || (
             dist_vertical === 0 && (dist_horiz === 1 || dist_horiz === -1))) {
-            console.log("Next to goal, not navigating")
+            //console.log("Next to goal, not navigating")
             this.#navigating = false;
             if (dist_vertical === -1) {
                 move_choices = [0, 2, 3]; // Cannot move down
@@ -118,7 +117,7 @@ class MockSelf {  // Used in the perturbation game
         }
 
         if (this.is_navigating()) {
-            console.log('Navigating');
+            //console.log('Navigating');
 
             // Navigate to reward
             function check_vertical() {
@@ -449,13 +448,10 @@ class Game {
             return;
         }
 
-        console.log("CHANGING...");
-
         let rn = rand(3); // 0, 1, 2
         let temp = this.#avatarPosition;
-        this.getBoard()[temp[0]][temp[1]] = 0; // set avatar's old position to 0
+        //this.getBoard()[temp[0]][temp[1]] = 0; // set avatar's old position to 0
         this.setAvatarPos(this.#ns_positions[rn]);
-        //console.log("AGENT CHANGED. Current agent: " + this.#avatarPosition );
         this.getBoard()[this.#avatarPosition[0]][this.#avatarPosition[1]] = 8;
         this.#ns_positions[rn] = temp;
 

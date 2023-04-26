@@ -220,7 +220,7 @@ class Game {
     #mockSelf;
 
     constructor(gameType) {
-        this.#num_levels = 100;
+        this.#num_levels = 5;
         this.#gameType = gameType;
         this.#level_count = 0;
         this.#avatarPosition = random_avatar_pos(gameType);

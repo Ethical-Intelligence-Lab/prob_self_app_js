@@ -71,7 +71,7 @@ def redirect_to_less(request):
     # index = min(enumerate(counts), key=itemgetter(1))[0]
     # return globals()[game_list[index]](request, render_data)
 
-    return redirect('change_agent_perturbed')
+    return redirect('change_agent_click')
 
 
 # Show the consent form
@@ -242,6 +242,22 @@ def shuffle_keys_click(request):
     print("in shuffle_keys_click game: ", context)
     return render(request, "game/shuffle_keys_click.html", context)
 
+def change_agent_click(request):
+    worker_id = request.session.get('worker_id')
+    if worker_id is None:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    # Participant does not exist
+    if not Participant.objects.filter(worker_id=worker_id).exists():
+        return redirect('cannot_attend')
+
+    p = Participant.objects.get(worker_id=worker_id)
+    if p.finished_game:
+        return render(request, "game/cannot_attend.html", {'worker_id': worker_id})
+
+    context = {'worker_id': worker_id}
+    print("in change_agent_click game: ", context)
+    return render(request, "game/change_agent_click.html", context)
 
 def change_agent(request):
     worker_id = request.session.get('worker_id')

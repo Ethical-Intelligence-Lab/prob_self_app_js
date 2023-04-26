@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['eilexp.xyz']
+ALLOWED_HOSTS = ['eillab.xyz']
 
 # Application definition
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
@@ -81,7 +81,6 @@ WSGI_APPLICATION = 'prob_self.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
 """
 DATABASES = {
     'default': {

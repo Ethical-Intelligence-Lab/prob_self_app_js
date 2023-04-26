@@ -46,8 +46,8 @@ def register_participant(request, worker_id):
         participant = Participant(worker_id=worker_id)
         participant.save()
     except:
-        return HttpResponse("False")
-    return HttpResponse("True")
+        return HttpResponse("Error: This name exists, try another one")
+    return HttpResponse("Success")
 
 
 def finished_survey(request, worker_id):

@@ -22,7 +22,7 @@
                 <h5 class="card-title">Instructions</h5>
                 <h6><b id="bigger">- Important:</b> In each level, <b id="bigger">as soon as</b> you find which
                     square you are
-                    controlling, please click on that square.</h6>
+                    controlling, please click on that square. Please do this <b id="bigger">every time</b> you find which square you are controlling.</h6>
                 <h6 class="card-subtitle mb-2 text-muted">- Additionally, please use the arrow keys to play the
                     game.</h6>
                 <h6 class="card-subtitle mb-2 text-muted">- Your progress will be lost if you
@@ -60,6 +60,7 @@
     let game = new Game("change_agent");
     var clicked = false;
     var selectedAgents = [];
+    var last_clicked_ts;
     var markup = game.getBoard().map((row, rindex) => row.map((col, cindex) => `<span id="${rindex}x${cindex}" class="field ${col === 8 ? "avatar" : col === 3 ? "goal" : col === 0 ? "grass" : "wall"}"></span>`).join("")).join("<span class='clear'></span>");
     document.getElementById("container").innerHTML = markup;
 
@@ -112,7 +113,7 @@
 
                 if (game.getLevelCount() > parseInt($('#level_count').text().split(': ')[1])) { // Next Level
                     if (!clicked) {
-                        alert("Alert: You did not select a square during the last level. Please click on the square you are controlling, once in each level.")
+                        alert("Alert: You did not select a square during the last level. Please click on a square, every time you find out which one you are controlling.")
                     }
 
                     clicked = false;
@@ -196,7 +197,7 @@
         /* reset values */
         xDown = null;
         yDown = null;
-    };
+    };last_clicked_ts
 
     let outer = document.getElementById('outer'),
         wrapper = document.getElementById('wrap'),
@@ -232,38 +233,27 @@
         let id = $(event.target).attr('id');
         console.log($(event.target).attr('class'));
         if ($(event.target).attr('class') === "field avatar") {
-            if (clicked) { // Cannot click more than once in a level
-                //alert("Alert: Please select an agent only once in a level.")
+            clicked = true;
+            selectedAgents.push({
+                'level': game.getLevelCount(), 'step': game.getCurrentActionCount(),
+                'real_self': game.getAvatarPos(), 'clicked_self': id.split('x').map(Number)
+            });
+            console.log(selectedAgents);
+            var $el = $(event.target);
+            $el.css("background", "blue");
+            setTimeout(function () {
+                $el.css("background", "red");
+            }, 500);
 
-                clicked = true;
-                selectedAgents.push({
-                    'level': game.getLevelCount(), 'step': game.getCurrentActionCount(),
-                    'real_self': game.getAvatarPos(), 'clicked_self': id.split('x').map(Number)
-                });
-                console.log(selectedAgents);
-                var $el = $(event.target);
-                $el.css("background", "blue");
-                setTimeout(function () {
-                    $el.css("background", "red");
-                }, 500);
-                
-            } else { // Append
-                //if (game.isNextToGoal()) {
-                //    alert("Alert: Remember, on each level you should click on the square you are controlling AS SOON AS find it, NOT at the end")
-                //}
-
-                clicked = true;
-                selectedAgents.push({
-                    'level': game.getLevelCount(), 'step': game.getCurrentActionCount(),
-                    'real_self': game.getAvatarPos(), 'clicked_self': id.split('x').map(Number)
-                });
-                console.log(selectedAgents);
-                var $el = $(event.target);
-                $el.css("background", "blue");
-                setTimeout(function () {
-                    $el.css("background", "red");
-                }, 500);
+            // Clicked less than five seconds before.
+            if(last_clicked_ts) {
+                console.log(new Date() - last_clicked_ts);
+                if(((new Date() - last_clicked_ts) / 1000) < 1) {
+                    alert("Please click on an agent once only when you found it.")
+                }
             }
+
+            last_clicked_ts = new Date();
         }
 
         // Check if clicked element is an avatar. If not, give error message

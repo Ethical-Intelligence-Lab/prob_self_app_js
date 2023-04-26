@@ -48,7 +48,7 @@
     {% csrf_token %}
     <input type="hidden" id="data" name="data" value=""/>
     <input id="worker_id" name="worker_id" type="hidden" value="{{ worker_id }}"/>
-    <input id="gameType" name="gameType" type="hidden" value="change_agent"/>
+    <input id="gameType" name="gameType" type="hidden" value="change_agent_perturbed"/>
 </form>
 
 <!-- end of mturk form  -->
@@ -57,7 +57,7 @@
 <script>
 
     // Construct the game
-    let game = new Game("change_agent");
+    let game = new Game("change_agent_perturbed");
     var clicked = false;
     var selectedAgents = [];
     var last_clicked_ts;

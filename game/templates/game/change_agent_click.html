@@ -30,7 +30,7 @@
                 <h5 id="step_count" style="font-weight: bold" class="card-subtitle mb-2 text">Current Action Count:
                     0</h5>
                 <h5 id="level_count" style="font-weight: bold" class="card-subtitle mb-2 text">CURRENT LEVEL: 0,
-                    REMAINING: 5</h5>
+                    REMAINING: 50</h5>
             </div>
         </div>
         <div id="outer">
@@ -119,7 +119,7 @@
                     clicked = false;
                 }
 
-                document.getElementById("level_count").textContent = "CURRENT LEVEL: " + game.getLevelCount().toString() + ", REMAINING: " + (5 - game.getLevelCount()).toString();
+                document.getElementById("level_count").textContent = "CURRENT LEVEL: " + game.getLevelCount().toString() + ", REMAINING: " + (50 - game.getLevelCount()).toString();
                 paintBoard();
                 if (game.getLevelCount() === game.getNumLevels()) { // Finished game, save data
                     document.removeEventListener("keydown", keyHandler, false);

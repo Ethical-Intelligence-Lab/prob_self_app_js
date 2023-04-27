@@ -234,6 +234,18 @@
         console.log($(event.target).attr('class'));
         if ($(event.target).attr('class') === "field avatar") {
             clicked = true;
+
+            // Clicked less than five seconds before.
+            if(last_clicked_ts) {
+                console.log(new Date() - last_clicked_ts);
+                if(((new Date() - last_clicked_ts) / 1000) < 1) {
+                    alert("Please click on an agent once only when you found it.");
+                    last_clicked_ts = new Date();
+                    return;
+                }
+            }
+
+            last_clicked_ts = new Date();
             selectedAgents.push({
                 'level': game.getLevelCount(), 'step': game.getCurrentActionCount(),
                 'real_self': game.getAvatarPos(), 'clicked_self': id.split('x').map(Number)
@@ -244,21 +256,7 @@
             setTimeout(function () {
                 $el.css("background", "red");
             }, 500);
-
-            // Clicked less than five seconds before.
-            if(last_clicked_ts) {
-                console.log(new Date() - last_clicked_ts);
-                if(((new Date() - last_clicked_ts) / 1000) < 1) {
-                    alert("Please click on an agent once only when you found it.")
-                }
-            }
-
-            last_clicked_ts = new Date();
         }
-
-        // Check if clicked element is an avatar. If not, give error message
-        // If it is an avatar, save it and let the user continue
-
     });
 
 </script>

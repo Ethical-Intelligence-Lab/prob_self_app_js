@@ -220,7 +220,7 @@ class Game {
     #mockSelf;
 
     constructor(gameType) {
-        this.#num_levels = 5;
+        this.#num_levels = 50;
         this.#gameType = gameType;
         this.#level_count = 0;
         this.#avatarPosition = random_avatar_pos(gameType);
@@ -247,11 +247,7 @@ class Game {
             this.#board = JSON.parse(JSON.stringify(this.#possible_levels[0]));
 
             if (gameType === "change_agent_perturbed" || gameType === "contingency_perturbed") {  // Construct the mock self
-                this.#num_levels = 5; // TODO: Change this to 50
-                //this.#mockSelf = new MockSelf(gameType, random_avatar_pos(gameType, true));
-
-                // Set mock self's position on the board
-                //this.#board[this.#mockSelf.get_location()[0]][this.#mockSelf.get_location()[1]] = 8;
+                this.#num_levels = 50;
             }
         }
     }
@@ -345,7 +341,7 @@ class Game {
 
             if (this.#gameType === "change_agent_perturbed" || this.#gameType === "contingency_perturbed") {
                 // Add the mock self
-                if (this.getLevelCount() > 0) {  // TODO:: Change this to > 24
+                if (this.getLevelCount() > 24) {
                     this.#mockSelf = new MockSelf(this.#gameType, random_avatar_pos(this.#gameType, true));
 
                     // Set mock self's position on the board
@@ -436,7 +432,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() > 0) { // TODO: Change this to > 24
+            if (this.getLevelCount() > 24) {
                 this.#mockSelf.move(this.getBoard());
             }
         }
@@ -494,7 +490,7 @@ class Game {
         }
 
         if ((this.#gameType === 'change_agent_perturbed') || (this.#gameType === 'contingency_perturbed')) { // Move mock self as well, if it exists
-            if (this.getLevelCount() > 0) { // TODO
+            if (this.getLevelCount() > 24) {
                 this.#mockSelf.move(this.getBoard());
             }
         }

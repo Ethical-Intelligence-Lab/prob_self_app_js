@@ -80,21 +80,20 @@
         function keyHandler(event) {
             if (game.getLevelCount() !== game.getNumLevels() && document.readyState === 'complete' && // listen only if document is loaded
                 (event.key === 'w' || event.key === 'a' || event.key === 's' || event.key === 'd' ||
-                    event.key === 'W' || event.key === 'A' || event.key === 'S' || event.key === 'D'
-                    || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' ||
+                    event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' ||
                     event.key === 'ArrowRight')) { // move
                 let tmp;
                 switch (event.key) {
-                    case ("w" || "W"):
+                    case "w":
                         tmp = 0;
                         break;
-                    case ("s" || "S"):
+                    case "s":
                         tmp = 1;
                         break;
-                    case ("a" || "A"):
+                    case "a":
                         tmp = 2;
                         break;
-                    case ("d" || "D"):
+                    case "d":
                         tmp = 3;
                         break;
                     case "ArrowUp":
@@ -110,7 +109,6 @@
                         tmp = 3;
                         break;
                 }
-
                 game.move(tmp);
                 document.getElementById("step_count").textContent = "Current Action Count: " + game.getCurrentActionCount();
 
@@ -216,10 +214,7 @@
             height = window.innerHeight,
             isMax = width >= maxWidth && height >= (maxHeight);
 
-        console.log(width, height, maxWidth, maxHeight)
-
         scale = Math.min(width / maxWidth, height / maxHeight);
-        console.log("Scale: " + scale)
 
         if (scale <= 1) {
             outer.style.transform = 'scale(' + scale + ')';
@@ -235,13 +230,11 @@
 
     $(document).click(function (event) {
         let id = $(event.target).attr('id');
-        console.log($(event.target).attr('class'));
         if ($(event.target).attr('class') === "field avatar") {
             clicked = true;
 
             // Clicked less than a second before.
             if(last_clicked_ts) {
-                console.log(new Date() - last_clicked_ts);
                 if(((new Date() - last_clicked_ts) / 1000) < 1) {
                     alert("Please click on an agent once only when you found it.");
                     last_clicked_ts = new Date();
@@ -254,7 +247,7 @@
                 'level': game.getLevelCount(), 'step': game.getCurrentActionCount(),
                 'real_self': game.getAvatarPos(), 'clicked_self': id.split('x').map(Number), 'timestamp': new Date()
             });
-            console.log(selectedAgents);
+            
             var $el = $(event.target);
             $el.css("background", "blue");
             setTimeout(function () {

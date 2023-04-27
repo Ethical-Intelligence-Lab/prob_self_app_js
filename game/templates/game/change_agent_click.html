@@ -16,6 +16,9 @@
 <body>
 
 <div class="center">
+    <div id="submitdiv" class="alert info" style="display: none">
+        Submitting, please wait...
+    </div>
     <div id="wrap">
         <div class="card">
             <div class="card-body">
@@ -127,6 +130,7 @@
                     let game_data = game.getData();
                     game_data['selectedAgents'] = selectedAgents;
                     document.getElementById("data").value = JSON.stringify(game_data);
+                    document.getElementById("submitdiv").style.display = "block";
                     document.getElementById("finish").submit();
                 }
             }

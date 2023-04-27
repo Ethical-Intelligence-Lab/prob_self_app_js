@@ -235,7 +235,7 @@
         if ($(event.target).attr('class') === "field avatar") {
             clicked = true;
 
-            // Clicked less than five seconds before.
+            // Clicked less than a second before.
             if(last_clicked_ts) {
                 console.log(new Date() - last_clicked_ts);
                 if(((new Date() - last_clicked_ts) / 1000) < 1) {
@@ -248,7 +248,7 @@
             last_clicked_ts = new Date();
             selectedAgents.push({
                 'level': game.getLevelCount(), 'step': game.getCurrentActionCount(),
-                'real_self': game.getAvatarPos(), 'clicked_self': id.split('x').map(Number)
+                'real_self': game.getAvatarPos(), 'clicked_self': id.split('x').map(Number), 'timestamp': new Date()
             });
             console.log(selectedAgents);
             var $el = $(event.target);

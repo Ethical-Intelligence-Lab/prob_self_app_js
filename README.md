@@ -1,12 +1,6 @@
 # prob_self_app_js
 
-Mturk app for collecting participant data for Probabilistic Self project. Written with Django.\
-This application saves the participant data into PostgreSQL database and to Amazon S3 in JSON format upon completion.
-
-Members:
-* Julian De Freitas
-* Zeliha Oğuz
-* Ahmet Kaan Uğuralp
+App for collecting participant data for Probabilistic Self project.
 
 <hr>
 
